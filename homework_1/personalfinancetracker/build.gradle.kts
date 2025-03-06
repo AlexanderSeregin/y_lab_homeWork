@@ -5,6 +5,15 @@ plugins {
 group = "website.ylab.learningplatform"
 version = "1.0-SNAPSHOT"
 
+tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to "website.ylab.learningplatform.Main"
+        )
+    }
+}
+
+
 repositories {
     mavenCentral()
 }
@@ -17,3 +26,4 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
