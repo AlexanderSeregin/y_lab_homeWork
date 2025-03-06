@@ -1,0 +1,42 @@
+personalfinancetracker/.gradle
+personalfinancetracker/build/
+!personalfinancetracker/gradle/wrapper/gradle-wrapper.jar
+!personalfinancetracker/**/src/main/**/build/
+!personalfinancetracker/**/src/test/**/build/
+
+### IntelliJ IDEA ###
+personalfinancetracker/.idea/modules.xml
+personalfinancetracker/.idea/jarRepositories.xml
+personalfinancetracker/.idea/compiler.xml
+personalfinancetracker/.idea/libraries/
+personalfinancetracker/*.iws
+personalfinancetracker/*.iml
+personalfinancetracker/*.ipr
+personalfinancetracker/out/
+!personalfinancetracker/**/src/main/**/out/
+!personalfinancetracker/**/src/test/**/out/
+
+### Eclipse ###
+personalfinancetracker/.apt_generated
+personalfinancetracker/.classpath
+personalfinancetracker/.factorypath
+personalfinancetracker/.project
+personalfinancetracker/.settings
+personalfinancetracker/.springBeans
+personalfinancetracker/.sts4-cache
+personalfinancetracker/bin/
+!personalfinancetracker/**/src/main/**/bin/
+!personalfinancetracker/**/src/test/**/bin/
+
+### NetBeans ###
+personalfinancetracker//nbproject/private/
+personalfinancetracker//nbbuild/
+personalfinancetracker//dist/
+personalfinancetracker//nbdist/
+personalfinancetracker//.nb-gradle/
+
+### VS Code ###
+personalfinancetracker/.vscode/
+
+### Mac OS ###
+personalfinancetracker/.DS_Store
