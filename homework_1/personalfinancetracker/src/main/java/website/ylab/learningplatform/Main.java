@@ -1,26 +1,18 @@
 package website.ylab.learningplatform;
 
 
+import website.ylab.learningplatform.datasource.*;
+import website.ylab.learningplatform.service.*;
+import website.ylab.learningplatform.controller.*;
+import website.ylab.learningplatform.view.*;
+
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Hello world!");
-
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("Enter 'q' to quit, 'c' to continue");
-            String input = scanner.nextLine();
-            if (input.equals("q")) {
-                break;
-            } else if (input.equals("c")) {
-                System.out.println("Continue");
-            } else {
-                System.out.println("Invalid input");
-            }
-        }
+            MenuController menuController = new MenuController();
+            menuController.runMenu();
 
     }
 }
