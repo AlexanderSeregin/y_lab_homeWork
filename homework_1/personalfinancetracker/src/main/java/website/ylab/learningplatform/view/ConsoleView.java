@@ -14,7 +14,7 @@ public class ConsoleView {
     public static int readInt() {
         while (!scanner.hasNextInt()) {
             scanner.next();
-            printError("Нужно ввести число!");
+            printError("Выберите 1 из пунктов меню.");
         }
         int value = scanner.nextInt();
         scanner.nextLine(); // считываем остаток строки

@@ -8,6 +8,11 @@ public class Notification {
         this.message = message;
     }
 
+    public Notification(long userId, String message) {
+        this.message = message;
+        this.userId = userId;
+    }
+
     public String getMessage() {
         return message;
     }

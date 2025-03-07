@@ -14,7 +14,7 @@ public class NotificationDao implements Dao<Notification> {
     }
 
     private final HashMap<Long, List<Notification>> repository = new HashMap<>();
-    @Override
+
     public Optional<Notification> get(long id) {
         if (repository.containsKey(id)) {
             Notification notification = repository.get(id).get(0);

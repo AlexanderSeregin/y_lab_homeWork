@@ -1,4 +1,13 @@
 package website.ylab.learningplatform.model;
 
-public class Category {
+public enum Category {
+    INCOME,
+    GROCERIES,
+    UTILITIES,
+    RENT,
+    ENTERTAINMENT,
+    MEDICAL,
+    TRANSPORTATION,
+    EDUCATION,
+    MISC;
 }
