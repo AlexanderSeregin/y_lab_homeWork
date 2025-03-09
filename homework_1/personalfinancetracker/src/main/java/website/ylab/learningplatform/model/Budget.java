@@ -9,7 +9,13 @@ public class Budget {
         this.amount = budget;
     }
 
+    /**
+     * Gets the budget amount for the user.
+     *
+     * @return the budget amount in the smallest unit of currency
+     */
     public BigDecimal getAmount() {
         return amount;
     }
+
 }

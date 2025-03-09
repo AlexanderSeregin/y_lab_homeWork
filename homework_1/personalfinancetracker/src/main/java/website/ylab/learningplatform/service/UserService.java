@@ -13,7 +13,7 @@ public class UserService {
     }
 
     public static void userChangePassword(User user, String newPassword) {
-        user.setPassword(newPassword);
+        user.setPasswordHash(newPassword);
     }
 
     public static void userDelete(User user) {

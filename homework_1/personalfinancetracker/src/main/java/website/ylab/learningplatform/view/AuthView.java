@@ -31,4 +31,12 @@ public class AuthView {
     public void showLoginError(String message) {
         ConsoleView.printError("Ошибка входа: " + message);
     }
+
+    public void showRegistrationErrorEmailAlreadyRegistered() {
+        ConsoleView.printError("Email уже зарегистрирован!");
+    }
+
+    public void showLoginErrorWrongCredentials() {
+        ConsoleView.printError("Неправильные учетные данные!");
+    }
 }

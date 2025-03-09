@@ -7,7 +7,16 @@ public class MenuController {
     private static final AuthController authController = new AuthController();
 
 
-    public static void runMenu() {
+    /**
+     * Shows the main menu to the user and waits for input.
+     * <p>
+     * The menu is shown in an infinite loop until the user chooses to exit (0).
+     * If the user chooses to login (1), the user is asked for credentials and
+     * if they are correct, the user's menu is shown. If the user chooses to
+     * register (2), the user is asked for credentials and if the email is not
+     * already registered, the user is added to the database.
+     */
+    public static void runMainMenu() {
         while (true) {
             MenuView.printStartMenu();
             int choice = ConsoleView.readInt();
@@ -19,12 +28,13 @@ public class MenuController {
                     authController.register();
                     break;
                 case 0:
-                    ConsoleView.printLine("Спасибо за использование!");
+                    ConsoleView.printBye();
                     System.exit(0);
                     break;
                 default:
-                    ConsoleView.printError("Ошибка выбора. Попробуйте ещё раз.");
+                    ConsoleView.printErrorSelection();
             }
-    }
+        }
 
-}}
+    }
+}
