@@ -8,8 +8,8 @@ public class User {
     private String name;
     private String email;
     private String passwordHash;
-    private boolean isAdmin;
-    private boolean isBlocked;
+    private final boolean isAdmin;
+    private final boolean isBlocked;
     private BigDecimal balance;
 
     public User(String name, String email, String passwordHash) {

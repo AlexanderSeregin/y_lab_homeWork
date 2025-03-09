@@ -55,7 +55,7 @@ public class AuthController {
     public void login() {
         String email = authView.askEmail();
         String password = authView.askPassword();
-        String passwordHash = authService.hashPassword(password);
+        String passwordHash = AuthService.hashPassword(password);
         boolean loggedIn = authService.login(email, passwordHash);
         if (loggedIn) {
             authView.showLoginSuccess();

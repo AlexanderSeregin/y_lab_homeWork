@@ -6,7 +6,7 @@ import website.ylab.learningplatform.model.User;
 import java.util.Base64;
 
 public class AuthService {
-    private UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao = UserDao.getInstance();
 
     public AuthService() {
     }

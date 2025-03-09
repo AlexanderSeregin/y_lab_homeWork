@@ -3,7 +3,7 @@ package website.ylab.learningplatform.model;
 import java.math.BigDecimal;
 
 public class Budget {
-    private BigDecimal amount;
+    private final BigDecimal amount;
 
     public Budget(BigDecimal budget) {
         this.amount = budget;

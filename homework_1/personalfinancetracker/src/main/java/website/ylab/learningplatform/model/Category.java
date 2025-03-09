@@ -9,5 +9,5 @@ public enum Category {
     MEDICAL,
     TRANSPORTATION,
     EDUCATION,
-    MISC;
+    MISC
 }

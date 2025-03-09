@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class TransactionDao implements Dao<Transaction> {
-    private static long counter = 0;
+    private static final long counter = 0;
     private static final TransactionDao INSTANCE = new TransactionDao();
 
     private final HashMap<Long, List<Transaction>> repository = new HashMap<>();

@@ -15,7 +15,7 @@ class BudgetDaoTest {
 
     private BudgetDao budgetDao;
     private Budget testBudget;
-    private long testUserId = 1L;
+    private final long testUserId = 1L;
 
     @BeforeEach
     void setUp() {

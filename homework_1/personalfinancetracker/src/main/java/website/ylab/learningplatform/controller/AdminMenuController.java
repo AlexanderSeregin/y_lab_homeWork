@@ -8,32 +8,7 @@ import website.ylab.learningplatform.view.ConsoleView;
 
 
 public class AdminMenuController {
-    /**
-     * Show admin menu
-     *
-     * <p>This method displays an admin menu. The menu allows the administrator to view the list of users,
-     * view the transactions of the user, block the user, or exit the program.</p>
-     *
-     * <p>It uses the following methods:</p>
-     *
-     * <ul>
-     * <li>{@link website.ylab.learningplatform.view.AdminMenuView#printAdminMenu()}</li>
-     * <li>{@link website.ylab.learningplatform.view.ConsoleView#readInt()}</li>
-     * <li>{@link website.ylab.learningplatform.datasource.UserDao#getAll()}</li>
-     * <li>{@link website.ylab.learningplatform.datasource.TransactionDao#get(long)}</li>
-     * <li>{@link website.ylab.learningplatform.service.AdminService#blockUser(long)}</li>
-     * <li>{@link website.ylab.learningplatform.controller.MenuController#runMainMenu()}</li>
-     * <li>{@link System#exit(int)}</li>
-     * </ul>
-     *
-     * <p>It also uses the following constants:</p>
-     *
-     * <ul>
-     * <li>{@link website.ylab.learningplatform.view.ConsoleView#ERROR_SELECTION}</li>
-     * </ul>
-     *
-     * @since 1.0
-     */
+
     public static void showAdminMenu() {
         while (true) {
             AdminMenuView.printAdminMenu();

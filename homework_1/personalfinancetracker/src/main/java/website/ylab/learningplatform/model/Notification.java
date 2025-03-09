@@ -1,7 +1,7 @@
 package website.ylab.learningplatform.model;
 
 public class Notification {
-    private String message;
+    private final String message;
     private long userId;
 
     public Notification(String message) {

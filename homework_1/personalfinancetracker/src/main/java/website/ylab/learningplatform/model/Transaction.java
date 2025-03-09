@@ -7,13 +7,13 @@ import java.util.Date;
 public class Transaction {
     private static long counter = 0;
 
-    private long id;
-    private long userId;
+    private final long id;
+    private final long userId;
     private boolean isIncome;
     private String description;
     private BigDecimal amount;
     private Category category;
-    private Date date;
+    private final Date date;
 
     public Long getUserId() {
         return userId;

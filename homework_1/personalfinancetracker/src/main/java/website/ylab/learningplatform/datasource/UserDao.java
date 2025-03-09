@@ -17,7 +17,7 @@ public class UserDao implements Dao<User> {
         return INSTANCE;
     }
 
-    private HashMap<Long, User> repository = new HashMap<>();
+    private final HashMap<Long, User> repository = new HashMap<>();
 
 
     /**

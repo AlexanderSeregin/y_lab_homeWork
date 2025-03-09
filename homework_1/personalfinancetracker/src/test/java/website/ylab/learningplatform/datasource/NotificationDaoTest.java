@@ -14,7 +14,7 @@ class NotificationDaoTest {
 
     private NotificationDao notificationDao;
     private Notification testNotification;
-    private long testUserId = 1L;
+    private final long testUserId = 1L;
 
     @BeforeEach
     void setUp() {

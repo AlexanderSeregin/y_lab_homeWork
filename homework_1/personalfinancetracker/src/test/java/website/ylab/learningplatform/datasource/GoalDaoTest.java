@@ -13,7 +13,7 @@ class GoalDaoTest {
 
     private GoalDao goalDao;
     private Goal testGoal;
-    private long testUserId = 1L;
+    private final long testUserId = 1L;
 
     @BeforeEach
     void setUp() {
