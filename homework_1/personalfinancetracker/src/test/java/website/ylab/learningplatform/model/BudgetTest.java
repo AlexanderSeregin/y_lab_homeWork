@@ -10,11 +10,11 @@ public class BudgetTest {
 
     @Test
     public void testConstructor() {
-        // Arrange
+
         BigDecimal expectedAmount = new BigDecimal("1000.00");
 
-        // Act
-        Budget budget = new Budget(expectedAmount);
+
+        Budget budget = new Budget(userId, expectedAmount);
 
         // Assert
         assertNotNull(budget, "Budget should not be null");
@@ -24,7 +24,7 @@ public class BudgetTest {
     public void testGetAmount() {
         // Arrange
         BigDecimal expectedAmount = new BigDecimal("1000.00");
-        Budget budget = new Budget(expectedAmount);
+        Budget budget = new Budget(userId, expectedAmount);
 
         // Act
         BigDecimal actualAmount = budget.getAmount();
@@ -39,7 +39,7 @@ public class BudgetTest {
         BigDecimal negativeAmount = new BigDecimal("-500.00");
 
         // Act
-        Budget budget = new Budget(negativeAmount);
+        Budget budget = new Budget(userId, negativeAmount);
 
         // Assert
         assertEquals(negativeAmount, budget.getAmount(), "Budget should accept negative amounts");
@@ -51,7 +51,7 @@ public class BudgetTest {
         BigDecimal zeroAmount = BigDecimal.ZERO;
 
         // Act
-        Budget budget = new Budget(zeroAmount);
+        Budget budget = new Budget(userId, zeroAmount);
 
         // Assert
         assertEquals(zeroAmount, budget.getAmount(), "Budget should accept zero as amount");
@@ -61,7 +61,7 @@ public class BudgetTest {
     public void testAmountImmutability() {
         // Arrange
         BigDecimal initialAmount = new BigDecimal("1000.00");
-        Budget budget = new Budget(initialAmount);
+        Budget budget = new Budget(userId, initialAmount);
 
         // Act
         BigDecimal returnedAmount = budget.getAmount();

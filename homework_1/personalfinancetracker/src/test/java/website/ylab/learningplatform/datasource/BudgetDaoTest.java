@@ -29,7 +29,7 @@ class BudgetDaoTest {
             e.printStackTrace();
         }
 
-        testBudget = new Budget(new BigDecimal("1000.00"));
+        testBudget = new Budget(userId, new BigDecimal("1000.00"));
     }
 
     @Test
@@ -46,7 +46,7 @@ class BudgetDaoTest {
     void testGetAll() {
         budgetDao.save(testUserId, testBudget);
 
-        Budget anotherBudget = new Budget(new BigDecimal("500.00"));
+        Budget anotherBudget = new Budget(userId, new BigDecimal("500.00"));
         long anotherUserId = 2L;
         budgetDao.save(anotherUserId, anotherBudget);
 

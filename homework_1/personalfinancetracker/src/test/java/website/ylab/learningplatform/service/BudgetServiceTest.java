@@ -34,7 +34,7 @@ public class BudgetServiceTest {
     void testGetBudget_WhenBudgetExists() {
         // Setup
         BigDecimal expectedBudget = new BigDecimal("1000.00");
-        Budget budget = new Budget(expectedBudget);
+        Budget budget = new Budget(userId, expectedBudget);
 
         when(mockBudgetDao.get(testUser.getId())).thenReturn(Optional.of(budget));
 
@@ -88,7 +88,7 @@ public class BudgetServiceTest {
         // Setup
         BigDecimal budget = new BigDecimal("1000.00");
         BigDecimal spentAmount = new BigDecimal("1200.00");
-        Budget budgetObj = new Budget(budget);
+        Budget budgetObj = new Budget(userId, budget);
 
         when(mockBudgetDao.get(testUser.getId())).thenReturn(Optional.of(budgetObj));
 
@@ -118,7 +118,7 @@ public class BudgetServiceTest {
         // Setup
         BigDecimal budget = new BigDecimal("1000.00");
         BigDecimal spentAmount = new BigDecimal("800.00");
-        Budget budgetObj = new Budget(budget);
+        Budget budgetObj = new Budget(userId, budget);
 
         when(mockBudgetDao.get(testUser.getId())).thenReturn(Optional.of(budgetObj));
 

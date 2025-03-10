@@ -44,7 +44,9 @@ public class TransactionService {
         Date startOfMonth = calendar.getTime();
 
         List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
-
+        if (transactions == null) {
+            return BigDecimal.ZERO;
+        }
         return transactions.stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
                 .map(Transaction::getAmount)

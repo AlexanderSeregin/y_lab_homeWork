@@ -3,9 +3,11 @@ package website.ylab.learningplatform.model;
 import java.math.BigDecimal;
 
 public class Budget {
-    private final BigDecimal amount;
+    private long userId;
+    private BigDecimal amount;
 
-    public Budget(BigDecimal budget) {
+    public Budget(Long userId, BigDecimal budget) {
+        this.userId = userId;
         this.amount = budget;
     }
 
@@ -18,4 +20,7 @@ public class Budget {
         return amount;
     }
 
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

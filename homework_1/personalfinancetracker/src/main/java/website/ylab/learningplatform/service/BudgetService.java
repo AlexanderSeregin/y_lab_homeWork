@@ -31,6 +31,6 @@ public class BudgetService {
     }
 
     public static void setBudget(User user, BigDecimal newBudget) {
-        BudgetDao.getInstance().save(user.getId(), new Budget(newBudget));
+        BudgetDao.getInstance().save(user.getId(), new Budget(user.getId(), newBudget));
     }
 }
