@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  gradle-console-app:
+    build: .
+    ports:
+      - "8186:8186"
+    # Дополнительно можно указать restart-политику
+    # restart: unless-stopped
