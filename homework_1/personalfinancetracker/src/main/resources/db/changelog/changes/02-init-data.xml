@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Initialize default categories -->
+    <changeSet id="01-init-categories" author="ylab">
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Income"/>
+            <column name="description" value="Income from employment"/>
+            <column name="is_expense" valueBoolean="false"/>
+        </insert>
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Food"/>
+            <column name="description" value="Groceries and dining out"/>
+            <column name="is_expense" valueBoolean="true"/>
+        </insert>
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="Transport"/>
+            <column name="description" value="Public transportation, car, etc."/>
+            <column name="is_expense" valueBoolean="true"/>
+        </insert>
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="Housing"/>
+            <column name="description" value="Rent, utilities, etc."/>
+            <column name="is_expense" valueBoolean="true"/>
+        </insert>
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="5"/>
+            <column name="name" value="Entertainment"/>
+            <column name="description" value="Movies, games, events, etc."/>
+            <column name="is_expense" valueBoolean="true"/>
+        </insert>
+        <insert tableName="categories" schemaName="finance_schema">
+            <column name="id" valueNumeric="6"/>
+            <column name="name" value="Investment"/>
+            <column name="description" value="Stocks, bonds, etc."/>
+            <column name="is_expense" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+    <!-- Initialize default users -->
+    <changeSet id="02-init-users" author="ylab">
+        <!-- Admin user: username=admin, password=admin -->
+        <insert tableName="users" schemaName="finance_schema">
+            <column name="id" valueComputed="nextval('service_schema.user_seq')"/>
+            <column name="username" value="admin"/>
+            <column name="email" value="admin@admin.com"/>
+            <column name="password_hash" value="cGVyc29uYWxGaW5hbmNlQXBwYWRtaW4="/>
+            <column name="is_admin" valueBoolean="true"/>
+            <column name="is_blocked" valueBoolean="false"/>
+            <column name="balance" valueNumeric="0.00"/>
+        </insert>
+        <!-- Regular user: username=user, password=user -->
+        <insert tableName="users" schemaName="finance_schema">
+            <column name="id" valueComputed="nextval('service_schema.user_seq')"/>
+            <column name="username" value="user"/>
+            <column name="email" value="user@user.com"/>
+            <column name="password_hash" value="cGVyc29uYWxGaW5hbmNlQXBwdXNlcg=="/>
+            <column name="is_admin" valueBoolean="false"/>
+            <column name="is_blocked" valueBoolean="false"/>
+            <column name="balance" valueNumeric="1000.00"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

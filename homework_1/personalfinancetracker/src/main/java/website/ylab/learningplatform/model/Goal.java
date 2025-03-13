@@ -13,7 +13,7 @@ public class Goal {
     public BigDecimal getAmount() {
         if (amount == null) {
             return BigDecimal.ZERO;
-        }
+    }
         return amount;
     }
 

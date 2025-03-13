@@ -1,0 +1,129 @@
+package website.ylab.learningplatform.repository.impl;
+
+import website.ylab.learningplatform.model.Goal;
+import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.GoalRepository;
+import website.ylab.learningplatform.repository.UserRepository;
+
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * PostgreSQL implementation of GoalRepository
+ */
+public class PostgresGoalRepository extends PostgresRepository<Goal, Long> implements GoalRepository {
+    private static final PostgresGoalRepository INSTANCE = new PostgresGoalRepository();
+
+    // SQL queries
+    private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.goals WHERE id = ?";
+    private static final String SELECT_ALL = "SELECT * FROM finance_schema.goals";
+    private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.goals WHERE user_id = ?";
+    private static final String INSERT = "INSERT INTO finance_schema.goals (id, user_id, name, target_amount, current_amount, target_date, description, is_completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE finance_schema.goals SET user_id = ?, name = ?, target_amount = ?, current_amount = ?, target_date = ?, description = ?, is_completed = ? WHERE id = ?";
+    private static final String DELETE = "DELETE FROM finance_schema.goals WHERE id = ?";
+
+    private final UserRepository userRepository;
+
+    private PostgresGoalRepository() {
+        // Private constructor to enforce singleton pattern
+        this.userRepository = PostgresUserRepository.getInstance();
+    }
+
+    /**
+     * Get singleton instance
+     * @return repository instance
+     */
+    public static PostgresGoalRepository getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
+    public Optional<Goal> findById(Long id) {
+        return querySingle(SELECT_BY_ID, this::mapResultSetToGoal, id);
+    }
+
+    @Override
+    public Goal save(Goal goal) {
+        if (goal.getId() == null) {
+            // Get next value from sequence for new goals
+            Long goalId = getNextSequenceValue("service_schema.goal_seq");
+            goal.setId(goalId);
+            
+            executeUpdate(INSERT, 
+                    goal.getId(),
+                    goal.getUser().getId(),
+                    goal.getName(),
+                    goal.getTargetAmount(),
+                    goal.getCurrentAmount(),
+                    Date.valueOf(goal.getTargetDate()),
+                    goal.getDescription(),
+                    goal.isCompleted());
+        } else {
+            executeUpdate(UPDATE,
+                    goal.getUser().getId(),
+                    goal.getName(),
+                    goal.getTargetAmount(),
+                    goal.getCurrentAmount(),
+                    Date.valueOf(goal.getTargetDate()),
+                    goal.getDescription(),
+                    goal.isCompleted(),
+                    goal.getId());
+        }
+        return goal;
+    }
+
+    @Override
+    public List<Goal> findAll() {
+        return queryList(SELECT_ALL, this::mapResultSetToGoal);
+    }
+
+    @Override
+    public void delete(Goal goal) {
+        if (goal.getId() != null) {
+            deleteById(goal.getId());
+        }
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        executeUpdate(DELETE, id);
+    }
+
+    @Override
+    public List<Goal> findByUserId(Long userId) {
+        return queryList(SELECT_BY_USER_ID, this::mapResultSetToGoal, userId);
+    }
+
+    /**
+     * Map database result to Goal entity
+     * @param rs ResultSet containing goal data
+     * @return mapped Goal entity
+     * @throws SQLException if mapping fails
+     */
+    private Goal mapResultSetToGoal(ResultSet rs) throws SQLException {
+        // Get user from user repository
+        Long userId = rs.getLong("user_id");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new SQLException("User not found for ID: " + userId));
+        
+        LocalDate targetDate = rs.getDate("target_date").toLocalDate();
+        
+        // Create goal
+        Goal goal = new Goal(
+                user,
+                rs.getString("name"),
+                rs.getBigDecimal("target_amount"),
+                targetDate,
+                rs.getString("description")
+        );
+        goal.setId(rs.getLong("id"));
+        goal.setCurrentAmount(rs.getBigDecimal("current_amount"));
+        goal.setCompleted(rs.getBoolean("is_completed"));
+        
+        return goal;
+    }
+}

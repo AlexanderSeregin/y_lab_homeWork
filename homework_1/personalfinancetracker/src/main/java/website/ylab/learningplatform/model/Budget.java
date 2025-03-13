@@ -12,6 +12,24 @@ public class Budget {
     }
 
     /**
+     * Gets the user ID associated with this budget.
+     * 
+     * @return the user ID
+     */
+    public long getUserId() {
+        return userId;
+    }
+    
+    /**
+     * Sets the user ID associated with this budget.
+     * 
+     * @param userId the user ID to set
+     */
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    /**
      * Gets the budget amount for the user.
      *
      * @return the budget amount in the smallest unit of currency
