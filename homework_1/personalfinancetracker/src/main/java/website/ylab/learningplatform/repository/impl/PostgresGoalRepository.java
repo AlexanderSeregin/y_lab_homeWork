@@ -22,15 +22,15 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.goals WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.goals";
     private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.goals WHERE user_id = ?";
-    private static final String INSERT = "INSERT INTO finance_schema.goals (id, user_id, name, target_amount, current_amount, target_date, description, is_completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT = "INSERT INTO finance_schema.goals (id, user_id, target_amount) VALUES (?, ?, ?)";
     private static final String UPDATE = "UPDATE finance_schema.goals SET user_id = ?, name = ?, target_amount = ?, current_amount = ?, target_date = ?, description = ?, is_completed = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.goals WHERE id = ?";
 
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
 
     private PostgresGoalRepository() {
         // Private constructor to enforce singleton pattern
-        this.userRepository = PostgresUserRepository.getInstance();
+        //this.userRepository = PostgresUserRepository.getInstance();
     }
 
     /**
@@ -55,23 +55,13 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
             
             executeUpdate(INSERT, 
                     goal.getId(),
-                    goal.getUser().getId(),
-                    goal.getName(),
-                    goal.getTargetAmount(),
-                    goal.getCurrentAmount(),
-                    Date.valueOf(goal.getTargetDate()),
-                    goal.getDescription(),
-                    goal.isCompleted());
+                    goal.getUserId(),
+                   goal.getAmount());
         } else {
             executeUpdate(UPDATE,
-                    goal.getUser().getId(),
-                    goal.getName(),
-                    goal.getTargetAmount(),
-                    goal.getCurrentAmount(),
-                    Date.valueOf(goal.getTargetDate()),
-                    goal.getDescription(),
-                    goal.isCompleted(),
-                    goal.getId());
+                    goal.getId(),
+                    goal.getUserId(),
+                    goal.getAmount());
         }
         return goal;
     }
@@ -94,8 +84,8 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     }
 
     @Override
-    public List<Goal> findByUserId(Long userId) {
-        return queryList(SELECT_BY_USER_ID, this::mapResultSetToGoal, userId);
+    public Optional<Goal> findByUserId(Long userId) {
+        return querySingle(SELECT_BY_USER_ID, this::mapResultSetToGoal, userId);
     }
 
     /**
@@ -107,22 +97,21 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     private Goal mapResultSetToGoal(ResultSet rs) throws SQLException {
         // Get user from user repository
         Long userId = rs.getLong("user_id");
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new SQLException("User not found for ID: " + userId));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new SQLException("User not found for ID: " + userId));
         
-        LocalDate targetDate = rs.getDate("target_date").toLocalDate();
+       // LocalDate targetDate = rs.getDate("target_date").toLocalDate();
         
         // Create goal
         Goal goal = new Goal(
-                user,
-                rs.getString("name"),
-                rs.getBigDecimal("target_amount"),
-                targetDate,
-                rs.getString("description")
+                rs.getLong("id"),
+                rs.getLong("user_id"),
+                rs.getBigDecimal("target_amount")
         );
-        goal.setId(rs.getLong("id"));
-        goal.setCurrentAmount(rs.getBigDecimal("current_amount"));
-        goal.setCompleted(rs.getBoolean("is_completed"));
+//        goal.setId(rs.getLong("id"));
+//        goal.setUserId(rs.getLong("user_id"));
+//        goal.setAmount(rs.getBigDecimal("target_amount"));
+
         
         return goal;
     }

@@ -1,10 +1,10 @@
 package website.ylab.learningplatform.service;
 
-import website.ylab.learningplatform.datasource.UserDao;
 
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 public class AdminService {
     public static void blockUser(long userId) {
-        UserDao.getInstance().get(userId).ifPresent(user -> user.setIsBlocked(true));
+        PostgresUserRepository.getInstance().findById(userId).ifPresent(user -> user.setIsBlocked(true));
     }
 }

@@ -1,9 +1,11 @@
 package website.ylab.learningplatform.service;
 
 //import website.ylab.learningplatform.datasource.BudgetDao;
-import website.ylab.learningplatform.datasource.PostgresBudgetDao;
+//import website.ylab.learningplatform.datasource.PostgresBudgetDao;
+
 import website.ylab.learningplatform.model.Budget;
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.impl.PostgresBudgetRepository;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -13,7 +15,7 @@ public class BudgetService {
 
     public static void checkBudget(User user) {
         BigDecimal sum = TransactionService.getSumOfUserSpendingsInCurrentMonth(user);
-        Optional<Budget> budgetOptional = PostgresBudgetDao.getInstance().get(user.getId());
+        Optional<Budget> budgetOptional = PostgresBudgetRepository.getInstance().findByUserId(user.getId());
         if (budgetOptional.isEmpty()) {
             return;
         }
@@ -24,7 +26,7 @@ public class BudgetService {
     }
 
     public static BigDecimal getBudget(User user) {
-        Optional<Budget> budgetOptional = PostgresBudgetDao.getInstance().get(user.getId());
+        Optional<Budget> budgetOptional = PostgresBudgetRepository.getInstance().findByUserId(user.getId());
         if (budgetOptional.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -32,6 +34,7 @@ public class BudgetService {
     }
 
     public static void setBudget(User user, BigDecimal newBudget) {
-        PostgresBudgetDao.getInstance().save(user.getId(), new Budget(user.getId(), newBudget));
+        PostgresBudgetRepository.getInstance().save(new Budget(user.getId(), newBudget));
+        //PostgresBudgetDao.getInstance().save(user.getId(), new Budget(user.getId(), newBudget));
     }
 }

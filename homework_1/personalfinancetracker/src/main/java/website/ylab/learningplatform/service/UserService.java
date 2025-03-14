@@ -1,7 +1,8 @@
 package website.ylab.learningplatform.service;
 
-import website.ylab.learningplatform.datasource.UserDao;
+
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 public class UserService {
     public static void userChangeEmail(User user, String newEmail) {
@@ -17,6 +18,6 @@ public class UserService {
     }
 
     public static void userDelete(User user) {
-        UserDao.getInstance().delete(user);
+        PostgresUserRepository.getInstance().delete(user);
     }
 }

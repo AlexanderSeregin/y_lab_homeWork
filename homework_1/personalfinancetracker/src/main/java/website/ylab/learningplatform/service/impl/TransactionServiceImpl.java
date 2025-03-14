@@ -5,17 +5,15 @@ import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.TransactionRepository;
 import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.repository.impl.InMemoryTransactionRepository;
-import website.ylab.learningplatform.repository.impl.InMemoryUserRepository;
+
+
+import website.ylab.learningplatform.repository.impl.PostgresTransactionRepository;
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 import website.ylab.learningplatform.service.interfaces.BudgetService;
 import website.ylab.learningplatform.service.interfaces.TransactionService;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TransactionServiceImpl implements TransactionService {
@@ -26,8 +24,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionServiceImpl() {
         // В реальном приложении было бы использовано Dependency Injection
-        this.transactionRepository = InMemoryTransactionRepository.getInstance();
-        this.userRepository = InMemoryUserRepository.getInstance();
+        this.transactionRepository = PostgresTransactionRepository.getInstance();
+        this.userRepository = PostgresUserRepository.getInstance();
         this.budgetService = BudgetServiceImpl.getInstance();
     }
 
@@ -66,7 +64,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getUserTransactions(Long userId) {
+    public Optional<List<Transaction>> getUserTransactions(Long userId) {
         return transactionRepository.findByUserId(userId);
     }
 

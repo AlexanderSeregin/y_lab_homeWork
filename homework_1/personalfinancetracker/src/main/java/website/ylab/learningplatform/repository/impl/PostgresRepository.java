@@ -97,6 +97,7 @@ public abstract class PostgresRepository<T, ID> implements Repository<T, ID> {
             
             return ps.executeUpdate();
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("Database update failed", e);
         }
     }

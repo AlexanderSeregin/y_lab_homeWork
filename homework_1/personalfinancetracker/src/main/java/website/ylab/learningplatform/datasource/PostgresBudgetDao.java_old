@@ -35,22 +35,7 @@ public class PostgresBudgetDao implements Dao<Budget> {
      * @return an Optional containing the budget if found, otherwise an empty Optional
      */
     public Optional<Budget> get(long userId) {
-        String sql = "SELECT user_id, amount FROM finance_schema.budgets WHERE user_id = ?";
-        
-        try (Connection conn = databaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, userId);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    BigDecimal amount = rs.getBigDecimal("amount");
-                    return Optional.of(new Budget(userId, amount));
-                }
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error retrieving budget for user " + userId, e);
-        }
+       
     }
 
     /**
@@ -102,17 +87,7 @@ public class PostgresBudgetDao implements Dao<Budget> {
      * @return true if a budget was deleted, false otherwise
      */
     public boolean delete(long userId) {
-        String sql = "DELETE FROM finance_schema.budgets WHERE user_id = ?";
         
-        try (Connection conn = databaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, userId);
-            
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error deleting budget for user " + userId, e);
-        }
     }
 
     /**

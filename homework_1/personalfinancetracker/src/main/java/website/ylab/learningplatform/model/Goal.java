@@ -3,11 +3,18 @@ package website.ylab.learningplatform.model;
 import java.math.BigDecimal;
 
 public class Goal {
+    private Long id;
     private Long userId;
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
     public Goal(BigDecimal newGoal) {
         this.amount = newGoal;
+    }
+
+    public Goal(Long id, Long userId, BigDecimal amount) {
+        this.id = id;
+        this.userId = userId;
+        this.amount = amount;
     }
 
     public BigDecimal getAmount() {
@@ -17,11 +24,23 @@ public class Goal {
         return amount;
     }
 
-    public Object getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
     public void setUserId(Long l) {
         this.userId = l;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long goalId) {
+        this.id = goalId;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }

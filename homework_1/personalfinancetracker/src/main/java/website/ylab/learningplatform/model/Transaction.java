@@ -12,6 +12,16 @@ public class Transaction {
     private Category category;
     private final Date date;
 
+    public Transaction(Long id, Long userId, boolean isIncome, String description, BigDecimal amount, Category category, Date date) {
+        this.id = id;
+        this.userId = userId;
+        this.isIncome = isIncome;
+        this.description = description;
+        this.amount = amount;
+        this.category = category;
+        this.date = date != null ? date : new Date();
+    }
+
     public Transaction(Long userId, boolean isIncome, String description, BigDecimal amount, Category category, Date date) {
         this.userId = userId;
         this.isIncome = isIncome;

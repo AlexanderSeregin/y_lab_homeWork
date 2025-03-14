@@ -69,4 +69,30 @@
         </insert>
     </changeSet>
 
+    <changeSet id="03-init-budgets" author="ylab">
+        <insert tableName="budgets" schemaName="finance_schema">
+            <column name="id" valueNumeric="1"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="amount" valueNumeric="2000.00"/>
+        </insert>
+        <insert tableName="budgets" schemaName="finance_schema">
+            <column name="id" valueNumeric="2"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="amount" valueNumeric="1500.00"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="04-init-goals" author="ylab">
+        <insert tableName="goals" schemaName="finance_schema">
+            <column name="id" valueNumeric="1"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="target_amount" valueNumeric="5000.00"/>
+        </insert>
+        <insert tableName="goals" schemaName="finance_schema">
+            <column name="id" valueNumeric="2"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="target_amount" valueNumeric="3000.00"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,31 +1,32 @@
 package website.ylab.learningplatform.service;
 
-import website.ylab.learningplatform.datasource.UserDao;
+
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.UserRepository;
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
+import website.ylab.learningplatform.util.PasswordEncoder;
 
 import java.util.Base64;
+import java.util.Optional;
 
 public class AuthService {
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserRepository userRepository = PostgresUserRepository.getInstance();
 
     public AuthService() {
     }
 
     public boolean register(String name, String email, String password) {
-        if (userDao.findByEmail(email) != null) {
+        if (userRepository.findByEmail(email).isPresent()) {
             return false;
         }
-        User newUser = new User(name, email, hashPassword(password));
-        userDao.save(newUser);
+        User newUser = new User(name, email, PasswordEncoder.encode(password));
+        userRepository.save(newUser);
         return true;
     }
 
     public boolean login(String email, String passwordHash) {
-        User user = userDao.findByEmail(email);
-        return user != null && user.getPasswordHash().equals(passwordHash) && !user.getIsBlocked();
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.isPresent() && user.get().getPasswordHash().equals(passwordHash) && !user.get().getIsBlocked();
     }
 
-    public static String hashPassword(String password) {
-        return Base64.getEncoder().encodeToString(("salt" + password).getBytes());
-    }
 }

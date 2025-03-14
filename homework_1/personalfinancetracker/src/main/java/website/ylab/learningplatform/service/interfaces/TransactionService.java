@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service interface for transaction management operations
@@ -30,7 +31,7 @@ public interface TransactionService {
      * @param userId user id
      * @return list of user transactions
      */
-    List<Transaction> getUserTransactions(Long userId);
+    Optional<List<Transaction>> getUserTransactions(Long userId);
     
     /**
      * Update transaction description

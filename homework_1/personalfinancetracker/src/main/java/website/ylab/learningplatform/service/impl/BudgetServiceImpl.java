@@ -2,7 +2,7 @@ package website.ylab.learningplatform.service.impl;
 
 import website.ylab.learningplatform.model.Budget;
 import website.ylab.learningplatform.repository.BudgetRepository;
-import website.ylab.learningplatform.repository.impl.InMemoryBudgetRepository;
+import website.ylab.learningplatform.repository.impl.PostgresBudgetRepository;
 import website.ylab.learningplatform.service.interfaces.BudgetService;
 import website.ylab.learningplatform.service.interfaces.TransactionService;
 
@@ -14,7 +14,7 @@ public class BudgetServiceImpl implements BudgetService {
     private TransactionService transactionService; // Will be set after initialization to avoid circular dependency
 
     private BudgetServiceImpl() {
-        this.budgetRepository = InMemoryBudgetRepository.getInstance();
+        this.budgetRepository = PostgresBudgetRepository.getInstance();
     }
 
     public static BudgetServiceImpl getInstance() {

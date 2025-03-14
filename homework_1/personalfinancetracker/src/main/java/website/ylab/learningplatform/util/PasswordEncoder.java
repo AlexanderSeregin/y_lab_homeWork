@@ -16,7 +16,7 @@ public class PasswordEncoder {
      * @param rawPassword the raw password to encode
      * @return the encoded password
      */
-    public String encode(String rawPassword) {
+    public static String encode(String rawPassword) {
         return Base64.getEncoder().encodeToString((SALT + rawPassword).getBytes());
     }
     

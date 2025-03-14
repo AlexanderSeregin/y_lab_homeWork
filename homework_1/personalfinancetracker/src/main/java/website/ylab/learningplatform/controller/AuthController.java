@@ -1,8 +1,10 @@
 package website.ylab.learningplatform.controller;
 
-import website.ylab.learningplatform.datasource.UserDao;
+
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 import website.ylab.learningplatform.service.AuthService;
+import website.ylab.learningplatform.util.PasswordEncoder;
 import website.ylab.learningplatform.view.AuthView;
 
 public class AuthController {
@@ -55,11 +57,11 @@ public class AuthController {
     public void login() {
         String email = authView.askEmail();
         String password = authView.askPassword();
-        String passwordHash = AuthService.hashPassword(password);
+        String passwordHash = PasswordEncoder.encode(password);
         boolean loggedIn = authService.login(email, passwordHash);
         if (loggedIn) {
             authView.showLoginSuccess();
-            User user = UserDao.getInstance().findByEmail(email);
+            User user = PostgresUserRepository.getInstance().findByEmail(email).get();
             if (user.isAdmin())
                 AdminMenuController.showAdminMenu();
             else UserMenuController.showUserMenu(user);

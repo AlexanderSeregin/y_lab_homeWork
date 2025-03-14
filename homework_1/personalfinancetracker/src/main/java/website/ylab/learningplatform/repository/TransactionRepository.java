@@ -4,6 +4,7 @@ import website.ylab.learningplatform.model.Transaction;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for Transaction entity
@@ -14,7 +15,7 @@ public interface TransactionRepository extends Repository<Transaction, Long> {
      * @param userId user ID
      * @return list of transactions for given user
      */
-    List<Transaction> findByUserId(Long userId);
+    Optional<List<Transaction>> findByUserId(Long userId);
     
     /**
      * Find transactions by user ID for date range

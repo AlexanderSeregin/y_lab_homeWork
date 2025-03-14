@@ -69,8 +69,10 @@
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_transaction_user" references="finance_schema.users(id)" deleteCascade="true"/>
             </column>
-            <column name="category_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_transaction_category" references="finance_schema.categories(id)"/>
+            <column name="is_income" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
             </column>
             <column name="amount" type="DECIMAL(19,2)">
                 <constraints nullable="false"/>
