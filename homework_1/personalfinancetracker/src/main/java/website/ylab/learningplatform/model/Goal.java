@@ -20,8 +20,12 @@ public class Goal {
     public BigDecimal getAmount() {
         if (amount == null) {
             return BigDecimal.ZERO;
-    }
+        }
         return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public Long getUserId() {
@@ -38,9 +42,5 @@ public class Goal {
 
     public void setId(Long goalId) {
         this.id = goalId;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
     }
 }

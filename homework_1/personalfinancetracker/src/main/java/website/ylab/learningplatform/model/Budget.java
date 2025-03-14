@@ -13,16 +13,16 @@ public class Budget {
 
     /**
      * Gets the user ID associated with this budget.
-     * 
+     *
      * @return the user ID
      */
     public long getUserId() {
         return userId;
     }
-    
+
     /**
      * Sets the user ID associated with this budget.
-     * 
+     *
      * @param userId the user ID to set
      */
     public void setUserId(long userId) {

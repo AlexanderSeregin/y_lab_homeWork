@@ -6,7 +6,7 @@ import website.ylab.learningplatform.repository.UserRepository;
 import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 import website.ylab.learningplatform.util.PasswordEncoder;
 
-import java.util.Base64;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class AuthService {
@@ -19,7 +19,7 @@ public class AuthService {
         if (userRepository.findByEmail(email).isPresent()) {
             return false;
         }
-        User newUser = new User(name, email, PasswordEncoder.encode(password));
+        User newUser = new User(name, email, PasswordEncoder.encode(password), false, false, new BigDecimal(0));
         userRepository.save(newUser);
         return true;
     }

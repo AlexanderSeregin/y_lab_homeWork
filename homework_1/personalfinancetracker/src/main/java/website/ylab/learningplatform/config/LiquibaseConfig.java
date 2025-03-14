@@ -24,6 +24,7 @@ public class LiquibaseConfig {
 
     /**
      * Get the singleton instance of LiquibaseConfig
+     *
      * @return liquibase config instance
      */
     public static LiquibaseConfig getInstance() {

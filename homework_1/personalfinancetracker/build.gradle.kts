@@ -6,17 +6,14 @@ plugins {
 group = "website.ylab.learningplatform"
 version = "1.0-SNAPSHOT"
 
-// Configure the jar task to create a fat JAR with all dependencies
 tasks.jar {
     manifest {
         attributes(
             "Main-Class" to "website.ylab.learningplatform.Main"
         )
     }
-    // Include all dependencies in the JAR
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     
-    // Handle duplicate entries
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 public class User {
     private static long counter = 0;
+    private final boolean isAdmin;
     private Long id;
     private String username;
     private String email;
     private String passwordHash;
-    private final boolean isAdmin;
     private boolean isBlocked;
     private BigDecimal balance;
 
@@ -34,15 +34,17 @@ public class User {
 
     /**
      * Checks if the user has enough balance for a withdrawal
+     *
      * @param amount amount to check
      * @return true if user has enough balance
      */
     public boolean hasEnoughBalance(BigDecimal amount) {
         return balance.compareTo(amount) >= 0;
     }
-    
+
     /**
      * Add amount to user balance
+     *
      * @param amount amount to add (positive for deposit, negative for withdrawal)
      * @throws IllegalArgumentException if trying to withdraw more than available balance
      */
@@ -104,6 +106,10 @@ public class User {
         return balance;
     }
 
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     /**
      * Returns true if the user is blocked, false otherwise.
      *
@@ -111,15 +117,6 @@ public class User {
      */
     public boolean isBlocked() {
         return isBlocked;
-    }
-
-    /**
-     * Returns true if the user is an administrator, false otherwise.
-     *
-     * @return true if the user is an administrator, false otherwise
-     */
-    public boolean isAdmin() {
-        return isAdmin;
     }
 
     /**
@@ -131,23 +128,28 @@ public class User {
         this.isBlocked = blocked;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public void setName(String newName) {
-        this.username = newName;
-    }
-
-    public void setIsBlocked(boolean b) {
-        this.isBlocked = b;
+    /**
+     * Returns true if the user is an administrator, false otherwise.
+     *
+     * @return true if the user is an administrator, false otherwise
+     */
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     public String getName() {
         return username;
     }
 
+    public void setName(String newName) {
+        this.username = newName;
+    }
+
     public boolean getIsBlocked() {
         return isBlocked;
+    }
+
+    public void setIsBlocked(boolean b) {
+        this.isBlocked = b;
     }
 }

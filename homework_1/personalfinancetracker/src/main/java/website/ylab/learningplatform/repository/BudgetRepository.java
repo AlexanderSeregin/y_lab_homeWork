@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface BudgetRepository extends Repository<Budget, Long> {
     /**
      * Find budget by user ID
+     *
      * @param userId user ID
      * @return Optional containing budget if found
      */

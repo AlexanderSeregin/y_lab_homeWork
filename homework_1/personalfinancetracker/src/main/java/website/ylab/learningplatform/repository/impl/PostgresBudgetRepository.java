@@ -19,12 +19,12 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
 
 
     private PostgresBudgetRepository() {
-        // Private constructor to enforce singleton pattern
         this.databaseConfig = DatabaseConfig.getInstance();
     }
 
     /**
      * Get singleton instance
+     *
      * @return repository instance
      */
     public static PostgresBudgetRepository getInstance() {
@@ -33,13 +33,11 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
 
     @Override
     public Optional<Budget> findById(Long id) {
-        // In this simplified model, the id is actually the userId
         return findByUserId(id);
     }
 
     @Override
     public Budget save(Budget budget) {
-        // Check if a budget already exists for this user
         String checkSql = "SELECT id FROM finance_schema.budgets WHERE user_id = ?";
         String insertSql = "INSERT INTO finance_schema.budgets (id, user_id, amount) VALUES (nextval('service_schema.budget_seq'), ?, ?)";
         String updateSql = "UPDATE finance_schema.budgets SET amount = ? WHERE user_id = ?";
@@ -48,7 +46,6 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
         try (Connection conn = databaseConfig.getConnection()) {
             boolean exists = false;
 
-            // Check if budget exists
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
                 checkStmt.setLong(1, userId);
                 try (ResultSet rs = checkStmt.executeQuery()) {
@@ -56,7 +53,6 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
                 }
             }
 
-            // Insert or update based on existence
             if (exists) {
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                     updateStmt.setBigDecimal(1, budget.getAmount());
@@ -78,22 +74,16 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
 
     @Override
     public List<Budget> findAll() {
-//        List<Budget> budgets = new ArrayList<>();
-//        budgetDao.getAll().forEach(budgets::add);
-
         String sql = "SELECT user_id, amount FROM finance_schema.budgets";
         List<Budget> budgets = new ArrayList<>();
-
         try (Connection conn = databaseConfig.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 long userId = rs.getLong("user_id");
                 BigDecimal amount = rs.getBigDecimal("amount");
                 budgets.add(new Budget(userId, amount));
             }
-
             return budgets;
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving all budgets", e);
@@ -107,7 +97,6 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
         try (Connection conn = databaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, userId);
-
             int rowsAffected = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting budget for user " + userId, e);
@@ -117,14 +106,10 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
 
     @Override
     public void deleteById(Long userId) {
-        // In this simplified model, the id is actually the userId
-        //budgetDao.delete(id);
         String sql = "DELETE FROM finance_schema.budgets WHERE user_id = ?";
-
         try (Connection conn = databaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, userId);
-
             int rowsAffected = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting budget for user " + userId, e);
@@ -133,9 +118,6 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
 
     @Override
     public Optional<Budget> findByUserId(Long userId) {
-
-        //return budgetDao.get(userId);
-
         String sql = "SELECT user_id, amount FROM finance_schema.budgets WHERE user_id = ?";
 
         try (Connection conn = databaseConfig.getConnection();

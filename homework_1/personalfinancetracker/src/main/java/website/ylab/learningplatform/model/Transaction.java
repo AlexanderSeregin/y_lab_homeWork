@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class Transaction {
-    private Long id;
     private final Long userId;
-    private boolean isIncome;
+    private final boolean isIncome;
+    private final Date date;
+    private Long id;
     private String description;
     private BigDecimal amount;
     private Category category;
-    private final Date date;
 
     public Transaction(Long id, Long userId, boolean isIncome, String description, BigDecimal amount, Category category, Date date) {
         this.id = id;
@@ -33,11 +33,12 @@ public class Transaction {
 
     /**
      * Create a new income transaction
-     * @param userId user ID
+     *
+     * @param userId      user ID
      * @param description description
-     * @param amount positive amount
-     * @param category category
-     * @param date date
+     * @param amount      positive amount
+     * @param category    category
+     * @param date        date
      * @return new income transaction
      */
     public static Transaction createIncome(Long userId, String description, BigDecimal amount, Category category, Date date) {
@@ -49,18 +50,18 @@ public class Transaction {
 
     /**
      * Create a new expense transaction
-     * @param userId user ID
+     *
+     * @param userId      user ID
      * @param description description
-     * @param amount positive amount (will be stored as negative)
-     * @param category category
-     * @param date date
+     * @param amount      positive amount (will be stored as negative)
+     * @param category    category
+     * @param date        date
      * @return new expense transaction
      */
     public static Transaction createExpense(Long userId, String description, BigDecimal amount, Category category, Date date) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Expense amount must be positive");
         }
-        // Store expenses as negative values
         return new Transaction(userId, false, description, amount.negate(), category, date);
     }
 
@@ -84,8 +85,13 @@ public class Transaction {
         return amount;
     }
 
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
     /**
      * Get absolute amount (always positive)
+     *
      * @return absolute amount
      */
     public BigDecimal getAbsoluteAmount() {
@@ -113,20 +119,16 @@ public class Transaction {
         return category;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public String toString(Transaction t) {

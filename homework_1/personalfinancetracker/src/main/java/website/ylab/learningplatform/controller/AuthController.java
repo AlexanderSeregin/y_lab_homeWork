@@ -24,7 +24,6 @@ public class AuthController {
      * If the registration was successful, show a success message.
      * If the email is already registered, show an error message.
      * </p>
-     *
      */
     public void register() {
         // Контроллер просит View показать форму регистрации

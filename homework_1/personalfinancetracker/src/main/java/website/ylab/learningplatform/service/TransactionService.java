@@ -4,14 +4,19 @@ package website.ylab.learningplatform.service;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
-import website.ylab.learningplatform.repository.impl.PostgresGoalRepository;
+import website.ylab.learningplatform.repository.TransactionRepository;
+import website.ylab.learningplatform.repository.UserRepository;
 import website.ylab.learningplatform.repository.impl.PostgresTransactionRepository;
+import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TransactionService {
+    private static final TransactionRepository transactionRepository = PostgresTransactionRepository.getInstance();
+    private static final UserRepository userRepository = PostgresUserRepository.getInstance();
+
     public static void newTransaction(User user, boolean isIncome, BigDecimal amount, Category category, Date date, String description) {
         System.out.println("TransactionService.newTransaction");
         if (BigDecimal.ZERO.compareTo(amount) > 0) {
@@ -24,7 +29,8 @@ public class TransactionService {
             amount = amount.negate();
         }
         user.setBalance(user.getBalance().add(amount));
-        PostgresTransactionRepository.getInstance().save(new Transaction(user.getId(), isIncome, description, amount, category, date));
+        userRepository.save(user);
+        transactionRepository.save(new Transaction(user.getId(), isIncome, description, amount, category, date));
         BudgetService.checkBudget(user);
     }
 
@@ -43,7 +49,7 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(user.getId());
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -54,29 +60,27 @@ public class TransactionService {
     }
 
     public static Iterable<Transaction> getUserTransactions(User user) {
-        return PostgresTransactionRepository.getInstance().findByUserId(user.getId()).orElse(null);
+        return transactionRepository.findByUserId(user.getId()).orElse(null);
     }
 
     public static void changeDescription(User user, long transactionId, String newDescription) {
-        PostgresTransactionRepository ptr = PostgresTransactionRepository.getInstance();
-        ptr.save(new Transaction(transactionId, ptr.findById(transactionId).get().isIncome(), newDescription, ptr.findById(transactionId).get().getAmount(), ptr.findById(transactionId).get().getCategory(), ptr.findById(transactionId).get().getDate()));
+        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), newDescription, transactionRepository.findById(transactionId).get().getAmount(), transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
     }
 
     public static void changeAmount(User user, long transactionId, BigDecimal newAmount) {
-        BigDecimal oldAmount = PostgresTransactionRepository.getInstance().findById(transactionId).get().getAmount();
-        PostgresTransactionRepository ptr = PostgresTransactionRepository.getInstance();
-        ptr.save(new Transaction(transactionId, ptr.findById(transactionId).get().isIncome(), ptr.findById(transactionId).get().getDescription(), newAmount, ptr.findById(transactionId).get().getCategory(), ptr.findById(transactionId).get().getDate()));
+        BigDecimal oldAmount = transactionRepository.findById(transactionId).get().getAmount();
+        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), newAmount, transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
         user.setBalance(user.getBalance().subtract(newAmount.subtract(oldAmount)));
+        userRepository.save(user);
     }
 
     public static void changeCategory(User user, long transactionId, Category newCategory) {
-        PostgresTransactionRepository ptr = PostgresTransactionRepository.getInstance();
-        ptr.save(new Transaction(transactionId, ptr.findById(transactionId).get().isIncome(), ptr.findById(transactionId).get().getDescription(), ptr.findById(transactionId).get().getAmount(), newCategory, ptr.findById(transactionId).get().getDate()));
+        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), transactionRepository.findById(transactionId).get().getAmount(), newCategory, transactionRepository.findById(transactionId).get().getDate()));
     }
 
     public static void deleteTransaction(User user, long transactionToDeleteId) {
-        BigDecimal amount = PostgresTransactionRepository.getInstance().findById(transactionToDeleteId).get().getAmount();
-        PostgresTransactionRepository.getInstance().deleteById(transactionToDeleteId);
+        BigDecimal amount = transactionRepository.findById(transactionToDeleteId).get().getAmount();
+        transactionRepository.deleteById(transactionToDeleteId);
         user.setBalance(user.getBalance().add(amount));
     }
 
@@ -91,7 +95,7 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(user.getId());
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions.isEmpty()) {
             return null;
         }
@@ -113,7 +117,7 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(user.getId());
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions == null) {
             return null;
         }
@@ -124,7 +128,7 @@ public class TransactionService {
     }
 
     public static BigDecimal getSumOfUserSpendingsForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(user.getId());
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -137,7 +141,7 @@ public class TransactionService {
     }
 
     public static BigDecimal getSumOfUserIncomeForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(user.getId());
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }

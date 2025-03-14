@@ -1,14 +1,10 @@
 package website.ylab.learningplatform.repository.impl;
 
 import website.ylab.learningplatform.model.Goal;
-import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.GoalRepository;
-import website.ylab.learningplatform.repository.UserRepository;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +14,6 @@ import java.util.Optional;
 public class PostgresGoalRepository extends PostgresRepository<Goal, Long> implements GoalRepository {
     private static final PostgresGoalRepository INSTANCE = new PostgresGoalRepository();
 
-    // SQL queries
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.goals WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.goals";
     private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.goals WHERE user_id = ?";
@@ -26,15 +21,12 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     private static final String UPDATE = "UPDATE finance_schema.goals SET user_id = ?, name = ?, target_amount = ?, current_amount = ?, target_date = ?, description = ?, is_completed = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.goals WHERE id = ?";
 
-    //private final UserRepository userRepository;
-
     private PostgresGoalRepository() {
-        // Private constructor to enforce singleton pattern
-        //this.userRepository = PostgresUserRepository.getInstance();
     }
 
     /**
      * Get singleton instance
+     *
      * @return repository instance
      */
     public static PostgresGoalRepository getInstance() {
@@ -49,14 +41,12 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     @Override
     public Goal save(Goal goal) {
         if (goal.getId() == null) {
-            // Get next value from sequence for new goals
             Long goalId = getNextSequenceValue("service_schema.goal_seq");
             goal.setId(goalId);
-            
-            executeUpdate(INSERT, 
+            executeUpdate(INSERT,
                     goal.getId(),
                     goal.getUserId(),
-                   goal.getAmount());
+                    goal.getAmount());
         } else {
             executeUpdate(UPDATE,
                     goal.getId(),
@@ -90,29 +80,18 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
 
     /**
      * Map database result to Goal entity
+     *
      * @param rs ResultSet containing goal data
      * @return mapped Goal entity
      * @throws SQLException if mapping fails
      */
     private Goal mapResultSetToGoal(ResultSet rs) throws SQLException {
-        // Get user from user repository
         Long userId = rs.getLong("user_id");
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new SQLException("User not found for ID: " + userId));
-        
-       // LocalDate targetDate = rs.getDate("target_date").toLocalDate();
-        
-        // Create goal
         Goal goal = new Goal(
                 rs.getLong("id"),
                 rs.getLong("user_id"),
                 rs.getBigDecimal("target_amount")
         );
-//        goal.setId(rs.getLong("id"));
-//        goal.setUserId(rs.getLong("user_id"));
-//        goal.setAmount(rs.getBigDecimal("target_amount"));
-
-        
         return goal;
     }
 }

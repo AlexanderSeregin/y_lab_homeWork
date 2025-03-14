@@ -3,7 +3,6 @@ package website.ylab.learningplatform.repository.impl;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.UserRepository;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.Optional;
 public class PostgresUserRepository extends PostgresRepository<User, Long> implements UserRepository {
     private static final PostgresUserRepository INSTANCE = new PostgresUserRepository();
 
-    // SQL queries
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.users WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.users";
     private static final String SELECT_BY_USERNAME = "SELECT * FROM finance_schema.users WHERE username = ?";
@@ -25,11 +23,11 @@ public class PostgresUserRepository extends PostgresRepository<User, Long> imple
     private static final String DELETE = "DELETE FROM finance_schema.users WHERE id = ?";
 
     private PostgresUserRepository() {
-        // Private constructor to enforce singleton pattern
     }
 
     /**
      * Get singleton instance
+     *
      * @return repository instance
      */
     public static PostgresUserRepository getInstance() {
@@ -44,11 +42,10 @@ public class PostgresUserRepository extends PostgresRepository<User, Long> imple
     @Override
     public User save(User user) {
         if (user.getId() == null) {
-            // Get next value from sequence for new users
             Long userId = getNextSequenceValue("service_schema.user_seq");
             user.setId(userId);
-            
-            executeUpdate(INSERT, 
+
+            executeUpdate(INSERT,
                     user.getId(),
                     user.getUsername(),
                     user.getEmail(),
@@ -98,6 +95,7 @@ public class PostgresUserRepository extends PostgresRepository<User, Long> imple
 
     /**
      * Map database result to User entity
+     *
      * @param rs ResultSet containing user data
      * @return mapped User entity
      * @throws SQLException if mapping fails

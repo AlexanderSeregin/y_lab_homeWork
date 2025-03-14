@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
@@ -44,21 +44,6 @@
         </createTable>
     </changeSet>
 
-    <!-- Create categories table -->
-    <changeSet id="03-create-category-table" author="ylab">
-        <createTable tableName="categories" schemaName="finance_schema">
-            <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(50)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="description" type="VARCHAR(255)"/>
-            <column name="is_expense" type="BOOLEAN" defaultValueBoolean="true">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
 
     <!-- Create transactions table -->
     <changeSet id="04-create-transaction-table" author="ylab">
@@ -67,7 +52,8 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_transaction_user" references="finance_schema.users(id)" deleteCascade="true"/>
+                <constraints nullable="false" foreignKeyName="fk_transaction_user" references="finance_schema.users(id)"
+                             deleteCascade="true"/>
             </column>
             <column name="is_income" type="boolean">
                 <constraints nullable="false"/>
@@ -91,7 +77,8 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_budget_user" references="finance_schema.users(id)" deleteCascade="true"/>
+                <constraints nullable="false" foreignKeyName="fk_budget_user" references="finance_schema.users(id)"
+                             deleteCascade="true"/>
             </column>
             <column name="amount" type="DECIMAL(19,2)">
                 <constraints nullable="false"/>
@@ -106,7 +93,8 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_goal_user" references="finance_schema.users(id)" deleteCascade="true"/>
+                <constraints nullable="false" foreignKeyName="fk_goal_user" references="finance_schema.users(id)"
+                             deleteCascade="true"/>
             </column>
             <column name="target_amount" type="DECIMAL(19,2)">
                 <constraints nullable="false"/>
@@ -121,12 +109,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_notification_user" references="finance_schema.users(id)" deleteCascade="true"/>
+                <constraints nullable="false" foreignKeyName="fk_notification_user"
+                             references="finance_schema.users(id)" deleteCascade="true"/>
             </column>
             <column name="message" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
