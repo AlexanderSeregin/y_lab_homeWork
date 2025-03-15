@@ -4,7 +4,7 @@
    Просто запускаем в терминале
     nc test1.ev1l.ru 8186
     или
-    telnet test1.ev1l.ru 8186
+    telnet test1.ev1l.ru 8186 (стартует около 20 секунд)
 2. Сборка и запуск локально
    docker-compose up -d (или на линуксе docker compose up -d)
    далее можно или подключиться
