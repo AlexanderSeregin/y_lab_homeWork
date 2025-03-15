@@ -1,6 +1,5 @@
 package website.ylab.learningplatform.service;
 
-
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
@@ -14,11 +13,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TransactionService {
-    private static final TransactionRepository transactionRepository = PostgresTransactionRepository.getInstance();
-    private static final UserRepository userRepository = PostgresUserRepository.getInstance();
+    private static TransactionRepository transactionRepository = PostgresTransactionRepository.getInstance();
+    private static UserRepository userRepository = PostgresUserRepository.getInstance();
 
     public static void newTransaction(User user, boolean isIncome, BigDecimal amount, Category category, Date date, String description) {
-        System.out.println("TransactionService.newTransaction");
         if (BigDecimal.ZERO.compareTo(amount) > 0) {
             throw new IllegalArgumentException("Amount cannot be negative");
         }
@@ -97,7 +95,7 @@ public class TransactionService {
 
         Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
         if (transactions.isEmpty()) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return transactions.get().stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
@@ -118,13 +116,16 @@ public class TransactionService {
         Date startOfMonth = calendar.getTime();
 
         Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions == null) {
-            return null;
+        if (transactions.isEmpty()) {
+            return new HashMap<>();
         }
         return transactions.get().stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
                 .filter(t -> !t.isIncome())
-                .collect(Collectors.groupingBy(Transaction::getCategory, Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)));
+                .collect(Collectors.groupingBy(
+                        Transaction::getCategory,
+                        Collectors.reducing(BigDecimal.ZERO, t -> t.getAmount().abs(), BigDecimal::add)
+                ));
     }
 
     public static BigDecimal getSumOfUserSpendingsForPeriod(User user, Date from, Date to) {

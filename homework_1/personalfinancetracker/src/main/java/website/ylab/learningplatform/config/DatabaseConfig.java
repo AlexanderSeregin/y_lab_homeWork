@@ -14,15 +14,14 @@ import java.sql.SQLException;
  * Database configuration class that manages the connection pool using HikariCP
  */
 public class DatabaseConfig {
-    private static final DatabaseConfig INSTANCE = new DatabaseConfig();
-    private final HikariDataSource dataSource;
-    private final Config config;
+    private static DatabaseConfig INSTANCE = new DatabaseConfig();
+    private HikariDataSource dataSource;
+    private Config config;
 
     private DatabaseConfig() {
         try {
             this.config = ConfigFactory.parseFile(new File("src/main/resources/application.conf"))
                     .withFallback(ConfigFactory.load());
-
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setJdbcUrl(config.getString("database.url"));
             hikariConfig.setUsername(config.getString("database.username"));
@@ -31,14 +30,29 @@ public class DatabaseConfig {
             hikariConfig.setMaximumPoolSize(config.getInt("database.maximumPoolSize"));
             hikariConfig.setAutoCommit(config.getBoolean("database.autoCommit"));
             hikariConfig.setConnectionTimeout(config.getLong("database.connectionTimeout"));
-
             hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
             hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
             hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
             this.dataSource = new HikariDataSource(hikariConfig);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize database config", e);
+            try {
+                this.config = ConfigFactory.parseFile(new File("src/main/resources/applicationTest.conf"))
+                        .withFallback(ConfigFactory.load());
+                HikariConfig hikariConfig = new HikariConfig();
+                hikariConfig.setJdbcUrl(config.getString("database.url"));
+                hikariConfig.setUsername(config.getString("database.username"));
+                hikariConfig.setPassword(config.getString("database.password"));
+                hikariConfig.setDriverClassName(config.getString("database.driver"));
+                hikariConfig.setMaximumPoolSize(config.getInt("database.maximumPoolSize"));
+                hikariConfig.setAutoCommit(config.getBoolean("database.autoCommit"));
+                hikariConfig.setConnectionTimeout(config.getLong("database.connectionTimeout"));
+                hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                this.dataSource = new HikariDataSource(hikariConfig);
+            } catch (Exception e2) {
+                throw new RuntimeException("Failed to initialize database config", e2);
+            }
         }
     }
 

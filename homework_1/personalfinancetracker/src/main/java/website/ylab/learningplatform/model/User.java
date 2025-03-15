@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class User {
     private static long counter = 0;
-    private final boolean isAdmin;
+    private boolean isAdmin;
     private Long id;
     private String username;
     private String email;
@@ -30,6 +30,13 @@ public class User {
         this.isAdmin = isAdmin;
         this.isBlocked = isBlocked;
         this.balance = balance != null ? balance : BigDecimal.ZERO;
+    }
+
+    public User() {
+        this.id = ++counter;
+        this.isAdmin = false;
+        this.isBlocked = false;
+        this.balance = BigDecimal.ZERO;
     }
 
     /**
@@ -151,5 +158,9 @@ public class User {
 
     public void setIsBlocked(boolean b) {
         this.isBlocked = b;
+    }
+
+    public void setPassword(String password) {
+        this.passwordHash = password;
     }
 }

@@ -52,5 +52,11 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeEngines("junit-jupiter", "junit-vintage")
+        systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+        systemProperty("junit.jupiter.execution.parallel.mode.default", "sequential")
+        systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "sequential")
+
+    }
 }

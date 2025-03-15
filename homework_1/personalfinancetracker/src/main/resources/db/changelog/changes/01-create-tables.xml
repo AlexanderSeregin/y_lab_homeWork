@@ -43,6 +43,12 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="02-create-user-table-index" author="ylab">
+        <createIndex indexName="ix_email" unique="true" tableName="users" schemaName="finance_schema">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+
 
 
     <!-- Create transactions table -->
@@ -68,6 +74,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+    <changeSet id="02-create-transaction-table-index" author="ylab">
+        <createIndex indexName="ix_transaction_date" unique="false" tableName="transactions" schemaName="finance_schema">
+            <column name="transaction_date"/>
+        </createIndex>
     </changeSet>
 
     <!-- Create budgets table -->

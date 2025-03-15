@@ -10,9 +10,13 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 public class AuthService {
-    private final UserRepository userRepository = PostgresUserRepository.getInstance();
+    private UserRepository userRepository = PostgresUserRepository.getInstance();
 
     public AuthService() {
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public boolean register(String name, String email, String password) {
