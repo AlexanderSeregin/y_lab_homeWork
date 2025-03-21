@@ -34,4 +34,16 @@ public class BudgetService {
     public static void setBudget(User user, BigDecimal newBudget) {
         budgetRepository.save(new Budget(user.getId(), newBudget));
     }
+
+    public static Budget getUserBudget(User user) {
+        Optional<Budget> budgetOptional = budgetRepository.findByUserId(user.getId());
+        if (budgetOptional.isEmpty()) {
+            return null;
+        }
+        return budgetOptional.get();
+    }
+
+    public static Budget updateBudget(Budget budget) {
+        return budgetRepository.save(budget);
+    }
 }

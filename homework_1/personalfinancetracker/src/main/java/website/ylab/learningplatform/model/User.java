@@ -163,4 +163,8 @@ public class User {
     public void setPassword(String password) {
         this.passwordHash = password;
     }
+
+    public String getPassword() {
+        return passwordHash;
+    }
 }

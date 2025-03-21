@@ -15,7 +15,11 @@ public class GoalService {
         return goalRepository.findByUserId(id).orElse(null);
     }
 
-    public static void setGoal(User user, BigDecimal newGoal) {
-        goalRepository.save(new Goal(newGoal));
+    public static Goal setGoal(User user, BigDecimal newGoal) {
+        return goalRepository.save(new Goal(newGoal));
+    }
+
+    public static Goal getUserGoal(User user) {
+        return goalRepository.findByUserId(user.getId()).orElse(null);
     }
 }

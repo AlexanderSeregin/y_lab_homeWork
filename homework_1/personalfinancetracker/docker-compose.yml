@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: finance_user
       POSTGRES_PASSWORD: finance_password
     ports:
-      - "5234:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
