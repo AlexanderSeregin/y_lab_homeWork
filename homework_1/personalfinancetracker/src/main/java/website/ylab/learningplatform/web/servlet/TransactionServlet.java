@@ -41,31 +41,23 @@ public class TransactionServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // Get all transactions for user
             Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
             List<TransactionDto> transactionDtos = new ArrayList<>();
-
             for (Transaction transaction : transactions) {
                 transactionDtos.add(TransactionMapper.INSTANCE.toDto(transaction));
             }
-
             writeResponse(response, transactionDtos);
         } else {
             try {
-                // Get transaction by ID
                 long transactionId = Long.parseLong(pathInfo.substring(1));
-                // TODO: Add method to get transaction by ID
-                // For now, we'll get all transactions and filter
                 Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
                 Transaction found = null;
-
                 for (Transaction transaction : transactions) {
                     if (transaction.getId() == transactionId) {
                         found = transaction;
                         break;
                     }
                 }
-
                 if (found != null) {
                     writeResponse(response, TransactionMapper.INSTANCE.toDto(found));
                 } else {
@@ -81,11 +73,8 @@ public class TransactionServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = authenticateUser(request, response);
         if (user == null) return;
-
         try {
             TransactionDto transactionDto = readRequestBody(request, TransactionDto.class);
-
-            // Validate transaction input
             Set<ConstraintViolation<TransactionDto>> violations = validator.validate(transactionDto);
             if (!violations.isEmpty()) {
                 String errorMessage = violations.stream()
@@ -94,11 +83,7 @@ public class TransactionServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-
-            // Set the user ID
             transactionDto.setUserId(user.getId());
-
-            // Create transaction
             try {
                 TransactionService.newTransaction(
                         user,
@@ -108,11 +93,7 @@ public class TransactionServlet extends BaseServlet {
                         transactionDto.getDate() != null ? transactionDto.getDate() : new Date(),
                         transactionDto.getDescription()
                 );
-
-                // Refresh user to get updated balance
                 user = userService.getUserById(user.getId());
-
-                // Get the created transaction (latest one)
                 Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
                 Transaction latest = null;
                 for (Transaction t : transactions) {
@@ -140,14 +121,8 @@ public class TransactionServlet extends BaseServlet {
         User user = authenticateUser(request, response);
         if (user == null) return;
 
-//        String pathInfo = request.getPathInfo();
-//        if (pathInfo == null || pathInfo.equals("/")) {
-//            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Transaction ID is required");
-//            return;
-//        }
 
         try {
-//            long transactionId = Long.parseLong(pathInfo.substring(1));
             TransactionDto transactionDto = readRequestBody(request, TransactionDto.class);
             long transactionId = transactionDto.getId();
             if (transactionId == 0) {

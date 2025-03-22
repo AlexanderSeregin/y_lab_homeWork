@@ -53,8 +53,6 @@ public class AuthServlet extends BaseServlet {
     private void doLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             UserDto userDto = readRequestBody(request, UserDto.class);
-
-            // Simple validation for login
             if (userDto.getEmail() == null || userDto.getEmail().isEmpty() ||
                     userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Email and password are required");
@@ -62,12 +60,10 @@ public class AuthServlet extends BaseServlet {
             }
             User user = authService.loginUser(userDto.getEmail(), userDto.getPassword());
             if (user != null) {
-                // Set user in session
                 HttpSession session = request.getSession(true);
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("userEmail", user.getEmail());
 
-                // Return user data (without password)
                 UserDto responseDto = UserMapper.INSTANCE.toDto(user);
                 responseDto.setPassword(null); // Don't send password back
                 writeResponse(response, responseDto);
@@ -94,7 +90,6 @@ public class AuthServlet extends BaseServlet {
         try {
             UserDto userDto = readRequestBody(request, UserDto.class);
 
-            // Validate user input
             Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
             if (!violations.isEmpty()) {
                 String errorMessage = violations.stream()
@@ -104,28 +99,23 @@ public class AuthServlet extends BaseServlet {
                 return;
             }
 
-            // Check if user already exists
             if (authService.isEmailRegistered(userDto.getEmail())) {
                 writeErrorResponse(response, HttpServletResponse.SC_CONFLICT, "Email already registered");
                 return;
             }
 
-            // Create user
             User user = UserMapper.INSTANCE.toEntity(userDto);
             boolean sucess = authService.register(user.getName(), user.getEmail(), user.getPassword());
 
-            // Set user in session
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
 
-            // Set user email for audit
             request.setAttribute("userEmail", user.getEmail());
             if (!sucess) {
                 writeErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error during registration");
                 return;
             }
-            // Return user data (without password)
             UserDto responseDto = UserMapper.INSTANCE.toDto(user);
             responseDto.setPassword(null); // Don't send password back
             response.setStatus(HttpServletResponse.SC_CREATED);

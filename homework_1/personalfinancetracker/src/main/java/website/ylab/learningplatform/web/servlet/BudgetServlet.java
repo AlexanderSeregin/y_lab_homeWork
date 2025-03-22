@@ -37,13 +37,11 @@ public class BudgetServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // Get all budgets for user
             Budget budget = BudgetService.getUserBudget(user);
             BudgetDto budgetDto = BudgetMapper.INSTANCE.toDto(budget);
             writeResponse(response, budgetDto);
         } else {
             try {
-                // Get budget by ID
                 long budgetId = Long.parseLong(pathInfo.substring(1));
                 Budget budget = BudgetService.getUserBudget(user);
                 Budget found = budget;
@@ -66,8 +64,6 @@ public class BudgetServlet extends BaseServlet {
 
         try {
             BudgetDto budgetDto = readRequestBody(request, BudgetDto.class);
-
-            // Validate budget input
             Set<ConstraintViolation<BudgetDto>> violations = validator.validate(budgetDto);
             if (!violations.isEmpty()) {
                 String errorMessage = violations.stream()
@@ -76,11 +72,7 @@ public class BudgetServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-
-            // Set the user ID
             budgetDto.setUserId(user.getId());
-
-            // Create budget
             Budget budget = BudgetMapper.INSTANCE.toEntity(budgetDto);
             budget = new Budget(user.getId(), budget.getAmount());
 
@@ -96,16 +88,9 @@ public class BudgetServlet extends BaseServlet {
         User user = authenticateUser(request, response);
         if (user == null) return;
 
-//        String pathInfo = request.getPathInfo();
-//        if (pathInfo == null || pathInfo.equals("/")) {
-//            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Budget ID is required");
-//            return;
-//        }
-
         try {
             BudgetDto budgetDto = readRequestBody(request, BudgetDto.class);
 
-            // Check if budget exists and belongs to user
             Budget budget = BudgetService.getUserBudget(user);
             Budget found = budget;
 
@@ -114,7 +99,6 @@ public class BudgetServlet extends BaseServlet {
                 return;
             }
 
-            // Update budget
             if (budgetDto.getamount() != null) {
                 found.setAmount(budgetDto.getamount());
             }
@@ -142,10 +126,7 @@ public class BudgetServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-
-        // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-
         return user;
     }
 }

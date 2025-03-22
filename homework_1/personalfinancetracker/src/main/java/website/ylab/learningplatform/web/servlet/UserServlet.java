@@ -23,12 +23,10 @@ public class UserServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/me")) {
-            // Get current user info
             UserDto userDto = UserMapper.INSTANCE.toDto(user);
             userDto.setPassword(null); // Don't send password back
             writeResponse(response, userDto);
         } else if (pathInfo.equals("/balance")) {
-            // Get user balance
             writeResponse(response, new BalanceResponse(user.getBalance()));
         } else {
             writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Endpoint not found");
@@ -43,11 +41,8 @@ public class UserServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/me")) {
-            // Update user info
             try {
                 UserDto userDto = readRequestBody(request, UserDto.class);
-
-                // Update fields if provided
                 if (userDto.getEmail() != null && !userDto.getEmail().isEmpty()) {
                     user.setEmail(userDto.getEmail());
                 }
@@ -55,8 +50,6 @@ public class UserServlet extends BaseServlet {
                 if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
                     user.setPassword(userDto.getPassword()); // Password will be encoded in the service
                 }
-
-                // Save user
                 user = userService.updateUser(user);
 
                 // Return updated user

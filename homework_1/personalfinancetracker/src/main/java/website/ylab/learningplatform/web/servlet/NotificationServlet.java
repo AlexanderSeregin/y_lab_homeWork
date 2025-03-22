@@ -25,16 +25,13 @@ public class NotificationServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // Get all notifications for user
             Notification notification = NotificationService.getNotification(user);
             NotificationDto notificationDto = NotificationMapper.INSTANCE.toDto(notification);
             writeResponse(response, notificationDto);
         } else {
             try {
-                // Get notification by ID
                 long notificationId = Long.parseLong(pathInfo.substring(1));
                 Notification notification = NotificationService.getNotification(user);
-
                 if (notification != null) {
                     writeResponse(response, NotificationMapper.INSTANCE.toDto(notification));
                 } else {
@@ -53,18 +50,13 @@ public class NotificationServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-
-        // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-
         return user;
     }
 }

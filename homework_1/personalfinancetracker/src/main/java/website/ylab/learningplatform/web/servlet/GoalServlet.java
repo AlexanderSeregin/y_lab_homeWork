@@ -37,7 +37,6 @@ public class GoalServlet extends BaseServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // Get all goals for user
             Goal goal = GoalService.getUserGoal(user);
             GoalDto goalDto = GoalMapper.INSTANCE.toDto(goal);
             writeResponse(response, goalDto);
@@ -64,8 +63,6 @@ public class GoalServlet extends BaseServlet {
 
         try {
             GoalDto goalDto = readRequestBody(request, GoalDto.class);
-
-            // Validate goal input
             Set<ConstraintViolation<GoalDto>> violations = validator.validate(goalDto);
             if (!violations.isEmpty()) {
                 String errorMessage = violations.stream()
@@ -74,14 +71,9 @@ public class GoalServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-
-            // Set the user ID
             goalDto.setUserId(user.getId());
-
-            // Create goal
             Goal goal = GoalMapper.INSTANCE.toEntity(goalDto);
             goal = GoalService.setGoal(user, goal.getAmount());
-
             response.setStatus(HttpServletResponse.SC_CREATED);
             writeResponse(response, GoalMapper.INSTANCE.toDto(goal));
         } catch (Exception e) {
@@ -96,21 +88,15 @@ public class GoalServlet extends BaseServlet {
 
         try {
             GoalDto goalDto = readRequestBody(request, GoalDto.class);
-
-            // Check if goal exists and belongs to user
             Goal goal = GoalService.getUserGoal(user);
             Goal found = goal;
-
             if (found == null) {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Goal not found or does not belong to user");
                 return;
             }
-
-            //Update goal
             if (goalDto.getAmount() != null) {
                 found.setAmount(goalDto.getAmount());
             }
-
             System.out.println(found.getId() + " " + found.getUserId() + " " + found.getAmount());
             Goal updated = GoalService.setGoal(found);
             writeResponse(response, GoalMapper.INSTANCE.toDto(updated));
@@ -127,18 +113,13 @@ public class GoalServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-
-        // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-
         return user;
     }
 }
