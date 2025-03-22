@@ -3,11 +3,18 @@ package website.ylab.learningplatform;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import website.ylab.learningplatform.config.AspectConfig;
 import website.ylab.learningplatform.config.LiquibaseConfig;
 import website.ylab.learningplatform.web.servlet.*;
 
+
+
 public class Main {
     public static void main(String[] args) {
+
+        // Initialize aspects
+        AspectConfig.getInstance().initializeAspects();
+
         // Run database migrations
         LiquibaseConfig.getInstance().migrate();
 

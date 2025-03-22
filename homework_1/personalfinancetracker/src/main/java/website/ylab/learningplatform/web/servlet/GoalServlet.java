@@ -94,12 +94,6 @@ public class GoalServlet extends BaseServlet {
         User user = authenticateUser(request, response);
         if (user == null) return;
 
-//        String pathInfo = request.getPathInfo();
-//        if (pathInfo == null || pathInfo.equals("/")) {
-//            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Goal ID is required");
-//            return;
-//        }
-
         try {
             GoalDto goalDto = readRequestBody(request, GoalDto.class);
 
@@ -111,9 +105,8 @@ public class GoalServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Goal not found or does not belong to user");
                 return;
             }
-            //FIXME!
-            //Update goal
 
+            //Update goal
             if (goalDto.getAmount() != null) {
                 found.setAmount(goalDto.getAmount());
             }

@@ -35,7 +35,7 @@ public class AuthService {
 
     public User loginUser(String email, String passwordHash) {
         Optional<User> user = userRepository.findByEmail(email);
-        return user.get(); //FIXME!
+        return user.get();
     }
 
     public boolean isEmailRegistered(String email) {

@@ -1,0 +1,88 @@
+2025-03-22 13:33:39.415 [main] INFO  AspectConfig - Initializing AspectJ aspects
+2025-03-22 13:33:39.468 [main] INFO  AspectConfig - AuditAspect and LoggingAspect initialized
+2025-03-22 13:33:40.558 [main] INFO  Version - HV000001: Hibernate Validator 6.2.5.Final
+2025-03-22 13:34:12.015 [qtp1309956586-23] INFO  LoggingAspect - Executing BudgetServlet.doGet with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+]
+2025-03-22 13:34:12.019 [qtp1309956586-23] INFO  LoggingAspect - Executing BudgetServlet.authenticateUser with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+]
+2025-03-22 13:34:12.022 [qtp1309956586-23] INFO  LoggingAspect - Executing BaseServlet.writeErrorResponse with parameters: [HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+, 401, User not authenticated]
+2025-03-22 13:34:12.028 [qtp1309956586-23] INFO  LoggingAspect - BaseServlet.writeErrorResponse executed in 5 ms
+2025-03-22 13:34:12.029 [qtp1309956586-23] INFO  LoggingAspect - BudgetServlet.authenticateUser executed in 9 ms
+2025-03-22 13:34:12.031 [qtp1309956586-23] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:12 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: authenticateUser | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:12.032 [qtp1309956586-23] INFO  LoggingAspect - BudgetServlet.doGet executed in 13 ms
+2025-03-22 13:34:12.032 [qtp1309956586-23] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:12 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: doGet | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:12.742 [qtp1309956586-20] INFO  LoggingAspect - Executing BudgetServlet.doGet with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+]
+2025-03-22 13:34:12.743 [qtp1309956586-20] INFO  LoggingAspect - Executing BudgetServlet.authenticateUser with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+]
+2025-03-22 13:34:12.743 [qtp1309956586-20] INFO  LoggingAspect - Executing BaseServlet.writeErrorResponse with parameters: [HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:12 GMT
+
+, 401, User not authenticated]
+2025-03-22 13:34:12.744 [qtp1309956586-20] INFO  LoggingAspect - BaseServlet.writeErrorResponse executed in 1 ms
+2025-03-22 13:34:12.745 [qtp1309956586-20] INFO  LoggingAspect - BudgetServlet.authenticateUser executed in 2 ms
+2025-03-22 13:34:12.752 [qtp1309956586-20] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:12 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: authenticateUser | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:12.752 [qtp1309956586-20] INFO  LoggingAspect - BudgetServlet.doGet executed in 9 ms
+2025-03-22 13:34:12.753 [qtp1309956586-20] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:12 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: doGet | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:13.459 [qtp1309956586-25] INFO  LoggingAspect - Executing BudgetServlet.doGet with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:13 GMT
+
+]
+2025-03-22 13:34:13.462 [qtp1309956586-25] INFO  LoggingAspect - Executing BudgetServlet.authenticateUser with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:13 GMT
+
+]
+2025-03-22 13:34:13.463 [qtp1309956586-25] INFO  LoggingAspect - Executing BaseServlet.writeErrorResponse with parameters: [HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:13 GMT
+
+, 401, User not authenticated]
+2025-03-22 13:34:13.466 [qtp1309956586-25] INFO  LoggingAspect - BaseServlet.writeErrorResponse executed in 1 ms
+2025-03-22 13:34:13.466 [qtp1309956586-25] INFO  LoggingAspect - BudgetServlet.authenticateUser executed in 3 ms
+2025-03-22 13:34:13.468 [qtp1309956586-25] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:13 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: authenticateUser | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:13.468 [qtp1309956586-25] INFO  LoggingAspect - BudgetServlet.doGet executed in 8 ms
+2025-03-22 13:34:13.469 [qtp1309956586-25] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:13 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: doGet | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:14.193 [qtp1309956586-24] INFO  LoggingAspect - Executing BudgetServlet.doGet with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:14 GMT
+
+]
+2025-03-22 13:34:14.194 [qtp1309956586-24] INFO  LoggingAspect - Executing BudgetServlet.authenticateUser with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:14 GMT
+
+]
+2025-03-22 13:34:14.195 [qtp1309956586-24] INFO  LoggingAspect - Executing BaseServlet.writeErrorResponse with parameters: [HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:14 GMT
+
+, 401, User not authenticated]
+2025-03-22 13:34:14.198 [qtp1309956586-24] INFO  LoggingAspect - BaseServlet.writeErrorResponse executed in 3 ms
+2025-03-22 13:34:14.199 [qtp1309956586-24] INFO  LoggingAspect - BudgetServlet.authenticateUser executed in 4 ms
+2025-03-22 13:34:14.199 [qtp1309956586-24] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:14 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: authenticateUser | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:14.200 [qtp1309956586-24] INFO  LoggingAspect - BudgetServlet.doGet executed in 6 ms
+2025-03-22 13:34:14.201 [qtp1309956586-24] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:14 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: doGet | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:15.032 [qtp1309956586-25] INFO  LoggingAspect - Executing BudgetServlet.doGet with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:15 GMT
+
+]
+2025-03-22 13:34:15.033 [qtp1309956586-25] INFO  LoggingAspect - Executing BudgetServlet.authenticateUser with parameters: [Request(GET //localhost:8080/api/budgets/)@264ae93, HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:15 GMT
+
+]
+2025-03-22 13:34:15.033 [qtp1309956586-25] INFO  LoggingAspect - Executing BaseServlet.writeErrorResponse with parameters: [HTTP/1.1 200 
+Date: Sat, 22 Mar 2025 10:34:15 GMT
+
+, 401, User not authenticated]
+2025-03-22 13:34:15.033 [qtp1309956586-25] INFO  LoggingAspect - BaseServlet.writeErrorResponse executed in 0 ms
+2025-03-22 13:34:15.033 [qtp1309956586-25] INFO  LoggingAspect - BudgetServlet.authenticateUser executed in 0 ms
+2025-03-22 13:34:15.034 [qtp1309956586-25] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:15 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: authenticateUser | Method: GET | Endpoint: /api/budgets/
+2025-03-22 13:34:15.034 [qtp1309956586-25] INFO  LoggingAspect - BudgetServlet.doGet executed in 2 ms
+2025-03-22 13:34:15.034 [qtp1309956586-25] INFO  AuditAspect - [AUDIT] Time: 2025-03-22 13:34:15 | User: anonymous | IP: [0:0:0:0:0:0:0:1] | Action: doGet | Method: GET | Endpoint: /api/budgets/

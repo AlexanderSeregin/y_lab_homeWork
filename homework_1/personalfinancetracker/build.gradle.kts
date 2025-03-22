@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("org.liquibase.gradle") version "2.2.0"
+    id("io.freefair.aspectj.post-compile-weaving") version "8.4"
     application
 }
 
@@ -61,7 +62,7 @@ dependencies {
 
     // Validation
     implementation("javax.validation:validation-api:2.0.1.Final")
-    implementation("org.hibernate.validator:hibernate-validator:6.2.5.Final") // Changed to be compatible with javax
+    implementation("org.hibernate.validator:hibernate-validator:6.2.5.Final")
     implementation("org.glassfish:javax.el:3.0.0")
 
     // MapStruct for DTO mapping
@@ -71,6 +72,7 @@ dependencies {
     // AspectJ for AOP
     implementation("org.aspectj:aspectjrt:1.9.21")
     implementation("org.aspectj:aspectjweaver:1.9.21")
+    annotationProcessor("org.aspectj:aspectjtools:1.9.21")
 
     // Testing
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -82,6 +84,13 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.19.3")
     testImplementation("org.testcontainers:junit-jupiter:1.19.3")
     testImplementation("org.testcontainers:postgresql:1.19.3")
+
+    //Logging
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
+
 }
 
 tasks.test {
