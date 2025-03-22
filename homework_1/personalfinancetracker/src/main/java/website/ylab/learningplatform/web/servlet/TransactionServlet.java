@@ -39,16 +39,16 @@ public class TransactionServlet extends BaseServlet {
         if (user == null) return;
 
         String pathInfo = request.getPathInfo();
-        
+
         if (pathInfo == null || pathInfo.equals("/")) {
             // Get all transactions for user
             Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
             List<TransactionDto> transactionDtos = new ArrayList<>();
-            
+
             for (Transaction transaction : transactions) {
                 transactionDtos.add(TransactionMapper.INSTANCE.toDto(transaction));
             }
-            
+
             writeResponse(response, transactionDtos);
         } else {
             try {
@@ -58,14 +58,14 @@ public class TransactionServlet extends BaseServlet {
                 // For now, we'll get all transactions and filter
                 Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
                 Transaction found = null;
-                
+
                 for (Transaction transaction : transactions) {
                     if (transaction.getId() == transactionId) {
                         found = transaction;
                         break;
                     }
                 }
-                
+
                 if (found != null) {
                     writeResponse(response, TransactionMapper.INSTANCE.toDto(found));
                 } else {
@@ -84,7 +84,7 @@ public class TransactionServlet extends BaseServlet {
 
         try {
             TransactionDto transactionDto = readRequestBody(request, TransactionDto.class);
-            
+
             // Validate transaction input
             Set<ConstraintViolation<TransactionDto>> violations = validator.validate(transactionDto);
             if (!violations.isEmpty()) {
@@ -94,10 +94,10 @@ public class TransactionServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-            
+
             // Set the user ID
             transactionDto.setUserId(user.getId());
-            
+
             // Create transaction
             try {
                 TransactionService.newTransaction(
@@ -108,10 +108,10 @@ public class TransactionServlet extends BaseServlet {
                         transactionDto.getDate() != null ? transactionDto.getDate() : new Date(),
                         transactionDto.getDescription()
                 );
-                
+
                 // Refresh user to get updated balance
                 user = userService.getUserById(user.getId());
-                
+
                 // Get the created transaction (latest one)
                 Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
                 Transaction latest = null;
@@ -120,7 +120,7 @@ public class TransactionServlet extends BaseServlet {
                         latest = t;
                     }
                 }
-                
+
                 if (latest != null) {
                     response.setStatus(HttpServletResponse.SC_CREATED);
                     writeResponse(response, TransactionMapper.INSTANCE.toDto(latest));
@@ -140,61 +140,43 @@ public class TransactionServlet extends BaseServlet {
         User user = authenticateUser(request, response);
         if (user == null) return;
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Transaction ID is required");
-            return;
-        }
-        
+//        String pathInfo = request.getPathInfo();
+//        if (pathInfo == null || pathInfo.equals("/")) {
+//            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Transaction ID is required");
+//            return;
+//        }
+
         try {
-            long transactionId = Long.parseLong(pathInfo.substring(1));
+//            long transactionId = Long.parseLong(pathInfo.substring(1));
             TransactionDto transactionDto = readRequestBody(request, TransactionDto.class);
-            
-            // Check if transaction exists and belongs to user
-            Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
-            boolean found = false;
-            
-            for (Transaction transaction : transactions) {
-                if (transaction.getId() == transactionId) {
-                    found = true;
-                    break;
-                }
+            long transactionId = transactionDto.getId();
+            if (transactionId == 0) {
+                writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Transaction ID is required");
+                return;
             }
-            
-            if (!found) {
+            // Check if transaction exists and belongs to user
+            Transaction transaction = TransactionService.getTransactionById(transactionId);
+
+            if (transaction == null) {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Transaction not found or does not belong to user");
                 return;
             }
-            
+
             // Update transaction fields
             if (transactionDto.getDescription() != null && !transactionDto.getDescription().isEmpty()) {
-                TransactionService.changeDescription(user, transactionId, transactionDto.getDescription());
+                transaction.setDescription(transactionDto.getDescription());
             }
-            
-            if (transactionDto.getAmount() != null && transactionDto.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                TransactionService.changeAmount(user, transactionId, transactionDto.getAmount());
+
+            if (transactionDto.getAmount() != null && transactionDto.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                transaction.setAmount(transactionDto.getAmount());
             }
-            
+
             if (transactionDto.getCategory() != null) {
-                TransactionService.changeCategory(user, transactionId, transactionDto.getCategory());
+                transaction.setCategory(transactionDto.getCategory());
             }
-            
-            // Get updated transaction
-            transactions = TransactionService.getUserTransactions(user);
-            Transaction updated = null;
-            
-            for (Transaction transaction : transactions) {
-                if (transaction.getId() == transactionId) {
-                    updated = transaction;
-                    break;
-                }
-            }
-            
-            if (updated != null) {
-                writeResponse(response, TransactionMapper.INSTANCE.toDto(updated));
-            } else {
-                writeErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Transaction updated but could not be retrieved");
-            }
+            transaction = TransactionService.updateTransaction(transaction);
+            writeResponse(response, TransactionMapper.INSTANCE.toDto(transaction));
+
         } catch (NumberFormatException e) {
             writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid transaction ID");
         } catch (Exception e) {
@@ -212,26 +194,26 @@ public class TransactionServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Transaction ID is required");
             return;
         }
-        
+
         try {
             long transactionId = Long.parseLong(pathInfo.substring(1));
-            
+
             // Check if transaction exists and belongs to user
             Iterable<Transaction> transactions = TransactionService.getUserTransactions(user);
             boolean found = false;
-            
+
             for (Transaction transaction : transactions) {
                 if (transaction.getId() == transactionId) {
                     found = true;
                     break;
                 }
             }
-            
+
             if (!found) {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Transaction not found or does not belong to user");
                 return;
             }
-            
+
             // Delete transaction
             TransactionService.deleteTransaction(user, transactionId);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -248,18 +230,18 @@ public class TransactionServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-        
+
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-        
+
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-        
+
         // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-        
+
         return user;
     }
 }

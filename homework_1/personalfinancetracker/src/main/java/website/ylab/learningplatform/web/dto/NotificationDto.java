@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class NotificationDto {
     private Long id;
-    
+
     private Long userId;
-    
+
     private String message;
-    
+
     private Date createdAt;
-    
+
     private boolean isRead;
 
     public NotificationDto() {

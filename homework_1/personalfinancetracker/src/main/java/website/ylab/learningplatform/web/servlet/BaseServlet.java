@@ -56,9 +56,9 @@ public abstract class BaseServlet extends HttpServlet {
     /**
      * Write an error response
      *
-     * @param response  the HTTP response
-     * @param status    the HTTP status code
-     * @param message   the error message
+     * @param response the HTTP response
+     * @param status   the HTTP status code
+     * @param message  the error message
      * @throws IOException if an error occurs while writing the response
      */
     protected void writeErrorResponse(HttpServletResponse response, int status, String message) throws IOException {

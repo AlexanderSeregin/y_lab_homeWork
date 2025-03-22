@@ -16,8 +16,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +35,7 @@ public class BudgetServlet extends BaseServlet {
         if (user == null) return;
 
         String pathInfo = request.getPathInfo();
-        
+
         if (pathInfo == null || pathInfo.equals("/")) {
             // Get all budgets for user
             Budget budget = BudgetService.getUserBudget(user);
@@ -49,7 +47,7 @@ public class BudgetServlet extends BaseServlet {
                 long budgetId = Long.parseLong(pathInfo.substring(1));
                 Budget budget = BudgetService.getUserBudget(user);
                 Budget found = budget;
-                
+
                 if (found != null) {
                     writeResponse(response, BudgetMapper.INSTANCE.toDto(found));
                 } else {
@@ -68,7 +66,7 @@ public class BudgetServlet extends BaseServlet {
 
         try {
             BudgetDto budgetDto = readRequestBody(request, BudgetDto.class);
-            
+
             // Validate budget input
             Set<ConstraintViolation<BudgetDto>> violations = validator.validate(budgetDto);
             if (!violations.isEmpty()) {
@@ -81,11 +79,11 @@ public class BudgetServlet extends BaseServlet {
 
             // Set the user ID
             budgetDto.setUserId(user.getId());
-            
+
             // Create budget
             Budget budget = BudgetMapper.INSTANCE.toEntity(budgetDto);
             budget = new Budget(user.getId(), budget.getAmount());
-            
+
             response.setStatus(HttpServletResponse.SC_CREATED);
             writeResponse(response, BudgetMapper.INSTANCE.toDto(budget));
         } catch (Exception e) {
@@ -103,24 +101,24 @@ public class BudgetServlet extends BaseServlet {
 //            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Budget ID is required");
 //            return;
 //        }
-        
+
         try {
             BudgetDto budgetDto = readRequestBody(request, BudgetDto.class);
-            
+
             // Check if budget exists and belongs to user
             Budget budget = BudgetService.getUserBudget(user);
             Budget found = budget;
-            
+
             if (found == null) {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Budget not found or does not belong to user");
                 return;
             }
-            
+
             // Update budget
             if (budgetDto.getamount() != null) {
                 found.setAmount(budgetDto.getamount());
             }
-            
+
             Budget updated = BudgetService.updateBudget(found);
             writeResponse(response, BudgetMapper.INSTANCE.toDto(updated));
         } catch (NumberFormatException e) {
@@ -130,55 +128,24 @@ public class BudgetServlet extends BaseServlet {
         }
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = authenticateUser(request, response);
-        if (user == null) return;
-
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Budget ID is required");
-            return;
-        }
-        
-        try {
-
-            // Check if budget exists and belongs to user
-            Budget budget = BudgetService.getUserBudget(user);
-            
-            if (budget != null) {
-                writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Budget not found or does not belong to user");
-                return;
-            }
-            
-            // Delete budget
-            //FIXME! BudgetService.deleteBudget(budgetId);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (NumberFormatException e) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid budget ID");
-        } catch (Exception e) {
-            writeErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deleting budget: " + e.getMessage());
-        }
-    }
-
     private User authenticateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-        
+
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-        
+
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-        
+
         // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-        
+
         return user;
     }
 }

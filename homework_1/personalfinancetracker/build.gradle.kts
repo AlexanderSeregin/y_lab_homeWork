@@ -14,7 +14,6 @@ java {
 
 application {
     mainClass.set("website.ylab.learningplatform.Main")
-    // Remove AspectJ agent configuration as we'll use a different approach
 }
 
 tasks.jar {
@@ -24,7 +23,7 @@ tasks.jar {
         )
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    
+
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
@@ -50,25 +49,25 @@ dependencies {
     // Config
     implementation("com.typesafe:config:1.4.3")
     implementation("org.apache.maven.plugins:maven-shade-plugin:3.6.0")
-    
+
     // Use Jetty 9.x which is compatible with javax.servlet
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation("org.eclipse.jetty:jetty-server:9.4.51.v20230217")
     implementation("org.eclipse.jetty:jetty-servlet:9.4.51.v20230217")
-    
+
     // Jackson for JSON processing
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
-    
+
     // Validation
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.hibernate.validator:hibernate-validator:6.2.5.Final") // Changed to be compatible with javax
     implementation("org.glassfish:javax.el:3.0.0")
-    
+
     // MapStruct for DTO mapping
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
-    
+
     // AspectJ for AOP
     implementation("org.aspectj:aspectjrt:1.9.21")
     implementation("org.aspectj:aspectjweaver:1.9.21")

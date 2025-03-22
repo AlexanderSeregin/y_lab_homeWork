@@ -5,7 +5,8 @@ public class Notification {
     private long id;
     private long userId;
 
-    public Notification() {}
+    public Notification() {
+    }
 
     public Notification(String message) {
         this.message = message;

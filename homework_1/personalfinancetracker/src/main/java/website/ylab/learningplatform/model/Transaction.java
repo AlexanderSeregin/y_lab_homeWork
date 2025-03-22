@@ -13,7 +13,8 @@ public class Transaction {
     private BigDecimal amount;
     private Category category;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
     public Transaction(Long id, Long userId, boolean isIncome, String description, BigDecimal amount, Category category, Date date) {
         this.id = id;
@@ -80,8 +81,16 @@ public class Transaction {
         return userId;
     }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public Date getDate() {
         return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public BigDecimal getAmount() {
@@ -144,5 +153,9 @@ public class Transaction {
                 ", category=" + t.getCategory() +
                 ", date=" + t.getDate() +
                 '}';
+    }
+
+    public void setIsIncome(boolean isIncome) {
+        this.isIncome = isIncome;
     }
 }

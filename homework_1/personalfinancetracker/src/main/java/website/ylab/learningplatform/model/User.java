@@ -160,11 +160,11 @@ public class User {
         this.isBlocked = b;
     }
 
-    public void setPassword(String password) {
-        this.passwordHash = password;
-    }
-
     public String getPassword() {
         return passwordHash;
+    }
+
+    public void setPassword(String password) {
+        this.passwordHash = password;
     }
 }

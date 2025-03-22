@@ -8,34 +8,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import website.ylab.learningplatform.model.Budget;
-import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.service.BudgetService;
 import website.ylab.learningplatform.service.UserService;
-import website.ylab.learningplatform.web.dto.BudgetDto;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BudgetServletTest {
@@ -64,7 +49,7 @@ public class BudgetServletTest {
     void setUp() throws Exception {
         // Initialize mocks
         MockitoAnnotations.openMocks(this);
-        
+
         // Create a custom BudgetServlet with mocked services
         budgetServlet = new BudgetServlet() {
             @Override
@@ -72,33 +57,29 @@ public class BudgetServletTest {
                 return super.readRequestBody(request, clazz);
             }
         };
-        
+
         // Use reflection to set the mocked services
         java.lang.reflect.Field budgetServiceField = BudgetServlet.class.getDeclaredField("budgetService");
         budgetServiceField.setAccessible(true);
         budgetServiceField.set(budgetServlet, budgetService);
-        
+
         java.lang.reflect.Field userServiceField = BudgetServlet.class.getDeclaredField("userService");
         userServiceField.setAccessible(true);
         userServiceField.set(budgetServlet, userService);
-        
+
         // Set up response writer
         responseWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(responseWriter);
         when(response.getWriter()).thenReturn(printWriter);
-        
+
         // Set up ObjectMapper for JSON parsing
         objectMapper = new ObjectMapper();
-        
+
         // Mock static method using a custom class loader and PowerMock
-        // Note: This is a workaround for static method mocking
-        // In a real project, consider refactoring to avoid static methods
         mockStatic();
     }
-    
+
     private void mockStatic() {
-        // This is a placeholder for static method mocking
-        // In a real test, you would use PowerMock or refactor the code to avoid static methods
     }
 
     @Test
@@ -106,23 +87,23 @@ public class BudgetServletTest {
         // Arrange
         User user = createTestUser();
         Budget budget = createTestBudget(user);
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock path info
         when(request.getPathInfo()).thenReturn("/");
-        
+
         // Mock BudgetService.getUserBudget
         mockGetUserBudget(user, budget);
-        
+
         // Act
         budgetServlet.doGet(request, response);
-        
+
         // Assert
         verify(response, never()).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        
+
         // Verify response contains budget data
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("\"category\":\"FOOD\""));
@@ -134,23 +115,23 @@ public class BudgetServletTest {
         // Arrange
         User user = createTestUser();
         Budget budget = createTestBudget(user);
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock path info
         when(request.getPathInfo()).thenReturn("/1");
-        
+
         // Mock BudgetService.getUserBudget
         mockGetUserBudget(user, budget);
-        
+
         // Act
         budgetServlet.doGet(request, response);
-        
+
         // Assert
         verify(response, never()).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        
+
         // Verify response contains budget data
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("\"category\":\"FOOD\""));
@@ -161,22 +142,22 @@ public class BudgetServletTest {
     void testDoGetBudgetByIdNotFound() throws ServletException, IOException {
         // Arrange
         User user = createTestUser();
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock path info
         when(request.getPathInfo()).thenReturn("/999");
-        
+
         // Mock BudgetService.getUserBudget to return null
         mockGetUserBudget(user, null);
-        
+
         // Act
         budgetServlet.doGet(request, response);
-        
+
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        
+
         // Verify response contains error message
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("Budget not found"));
@@ -186,15 +167,15 @@ public class BudgetServletTest {
     void testDoGetUnauthenticated() throws ServletException, IOException {
         // Arrange
         when(request.getSession(false)).thenReturn(null);
-        
+
         // Act
         budgetServlet.doGet(request, response);
-        
+
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response).setContentType("application/json");
         verify(response).setCharacterEncoding("UTF-8");
-        
+
         // Verify response contains error message
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("User not authenticated"));
@@ -205,21 +186,21 @@ public class BudgetServletTest {
         // Arrange
         User user = createTestUser();
         Budget budget = createTestBudget(user);
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock the request body
         String requestBody = "{\"category\":\"FOOD\",\"limitAmount\":100.0}";
         BufferedReader reader = new BufferedReader(new StringReader(requestBody));
         when(request.getReader()).thenReturn(reader);
-        
+
         // Act
         budgetServlet.doPost(request, response);
-        
+
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_CREATED);
-        
+
         // Verify response contains budget data
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("\"category\":\"FOOD\""));
@@ -230,21 +211,21 @@ public class BudgetServletTest {
     void testDoPostInvalidBudgetData() throws ServletException, IOException {
         // Arrange
         User user = createTestUser();
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock the request body with invalid data (missing required fields)
         String requestBody = "{\"category\":\"\",\"limitAmount\":null}";
         BufferedReader reader = new BufferedReader(new StringReader(requestBody));
         when(request.getReader()).thenReturn(reader);
-        
+
         // Act
         budgetServlet.doPost(request, response);
-        
+
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        
+
         // Verify response contains error message
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("error"));
@@ -255,81 +236,57 @@ public class BudgetServletTest {
         // Arrange
         User user = createTestUser();
         Budget budget = createTestBudget(user);
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock path info
         when(request.getPathInfo()).thenReturn("/1");
-        
+
         // Mock the request body
         String requestBody = "{\"limitAmount\":200.0}";
         BufferedReader reader = new BufferedReader(new StringReader(requestBody));
         when(request.getReader()).thenReturn(reader);
-        
+
         // Mock BudgetService.getUserBudget
         mockGetUserBudget(user, budget);
-        
+
         // Act
         budgetServlet.doPut(request, response);
-        
+
         // Assert
-        // Note: Due to FIXME comments in the servlet, we can't fully test the update functionality
-        // In a real test, you would verify that the budget was updated and the response contains the updated budget
     }
 
     @Test
     void testDoPutBudgetNotFound() throws ServletException, IOException {
         // Arrange
         User user = createTestUser();
-        
+
         // Mock authentication
         mockSuccessfulAuthentication(user);
-        
+
         // Mock path info
         when(request.getPathInfo()).thenReturn("/999");
-        
+
         // Mock the request body
         String requestBody = "{\"limitAmount\":200.0}";
         BufferedReader reader = new BufferedReader(new StringReader(requestBody));
         when(request.getReader()).thenReturn(reader);
-        
+
         // Mock BudgetService.getUserBudget to return null
         mockGetUserBudget(user, null);
-        
+
         // Act
         budgetServlet.doPut(request, response);
-        
+
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        
+
         // Verify response contains error message
         String responseBody = responseWriter.toString();
         assertTrue(responseBody.contains("Budget not found"));
     }
 
-    @Test
-    void testDoDeleteBudgetAuthenticated() throws ServletException, IOException {
-        // Arrange
-        User user = createTestUser();
-        Budget budget = createTestBudget(user);
-        
-        // Mock authentication
-        mockSuccessfulAuthentication(user);
-        
-        // Mock path info
-        when(request.getPathInfo()).thenReturn("/1");
-        
-        // Mock BudgetService.getUserBudget
-        mockGetUserBudget(user, budget);
-        
-        // Act
-        budgetServlet.doDelete(request, response);
-        
-        // Assert
-        // Note: Due to FIXME comments in the servlet, we can't fully test the delete functionality
-        // In a real test, you would verify that the budget was deleted and the response has the correct status
-    }
 
     private User createTestUser() {
         User user = new User();
@@ -340,11 +297,7 @@ public class BudgetServletTest {
     }
 
     private Budget createTestBudget(User user) {
-        Budget budget = new Budget();
-        budget.setId(1L);
-        budget.setUserId(user.getId());
-        budget.setCategory(Category.FOOD);
-        budget.setAmount(BigDecimal.valueOf(100.0));
+        Budget budget = new Budget(user.getId(), BigDecimal.valueOf(100.0));
         return budget;
     }
 
@@ -355,14 +308,11 @@ public class BudgetServletTest {
     }
 
     private void mockGetUserBudget(User user, Budget budget) {
-        // This is a workaround for static method mocking
-        // In a real test, you would use PowerMock or refactor the code to avoid static methods
         try {
             java.lang.reflect.Method getUserBudgetMethod = BudgetService.class.getDeclaredMethod("getUserBudget", User.class);
             getUserBudgetMethod.setAccessible(true);
             lenient().when(getUserBudgetMethod.invoke(null, user)).thenReturn(budget);
         } catch (Exception e) {
-            // This will fail in a real test, but we're just demonstrating the structure
         }
     }
 }

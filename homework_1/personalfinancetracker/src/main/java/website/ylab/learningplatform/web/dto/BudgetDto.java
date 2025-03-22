@@ -1,7 +1,5 @@
 package website.ylab.learningplatform.web.dto;
 
-import website.ylab.learningplatform.model.Category;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;

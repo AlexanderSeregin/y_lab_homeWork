@@ -21,7 +21,7 @@ public class UserServlet extends BaseServlet {
         if (user == null) return;
 
         String pathInfo = request.getPathInfo();
-        
+
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/me")) {
             // Get current user info
             UserDto userDto = UserMapper.INSTANCE.toDto(user);
@@ -41,24 +41,24 @@ public class UserServlet extends BaseServlet {
         if (user == null) return;
 
         String pathInfo = request.getPathInfo();
-        
+
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/me")) {
             // Update user info
             try {
                 UserDto userDto = readRequestBody(request, UserDto.class);
-                
+
                 // Update fields if provided
                 if (userDto.getEmail() != null && !userDto.getEmail().isEmpty()) {
                     user.setEmail(userDto.getEmail());
                 }
-                
+
                 if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
                     user.setPassword(userDto.getPassword()); // Password will be encoded in the service
                 }
-                
+
                 // Save user
                 user = userService.updateUser(user);
-                
+
                 // Return updated user
                 UserDto responseDto = UserMapper.INSTANCE.toDto(user);
                 responseDto.setPassword(null); // Don't send password back
@@ -77,28 +77,28 @@ public class UserServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-        
+
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-        
+
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-        
+
         // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-        
+
         return user;
     }
-    
+
     private static class BalanceResponse {
         private final BigDecimal balance;
-        
+
         public BalanceResponse(BigDecimal balance) {
             this.balance = balance;
         }
-        
+
         public BigDecimal getBalance() {
             return balance;
         }

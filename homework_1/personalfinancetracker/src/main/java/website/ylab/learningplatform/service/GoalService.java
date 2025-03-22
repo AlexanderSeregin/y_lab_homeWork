@@ -22,4 +22,8 @@ public class GoalService {
     public static Goal getUserGoal(User user) {
         return goalRepository.findByUserId(user.getId()).orElse(null);
     }
+
+    public static Goal setGoal(Goal goal) {
+        return goalRepository.save(goal);
+    }
 }

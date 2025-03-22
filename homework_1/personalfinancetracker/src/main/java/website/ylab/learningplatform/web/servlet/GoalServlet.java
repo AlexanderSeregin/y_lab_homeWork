@@ -16,9 +16,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +35,7 @@ public class GoalServlet extends BaseServlet {
         if (user == null) return;
 
         String pathInfo = request.getPathInfo();
-        
+
         if (pathInfo == null || pathInfo.equals("/")) {
             // Get all goals for user
             Goal goal = GoalService.getUserGoal(user);
@@ -46,11 +43,9 @@ public class GoalServlet extends BaseServlet {
             writeResponse(response, goalDto);
         } else {
             try {
-                // Get goal by ID
-                long goalId = Long.parseLong(pathInfo.substring(1));
                 Goal goal = GoalService.getUserGoal(user);
                 Goal found = goal;
-                
+
                 if (found != null) {
                     writeResponse(response, GoalMapper.INSTANCE.toDto(found));
                 } else {
@@ -69,7 +64,7 @@ public class GoalServlet extends BaseServlet {
 
         try {
             GoalDto goalDto = readRequestBody(request, GoalDto.class);
-            
+
             // Validate goal input
             Set<ConstraintViolation<GoalDto>> violations = validator.validate(goalDto);
             if (!violations.isEmpty()) {
@@ -79,14 +74,14 @@ public class GoalServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-            
+
             // Set the user ID
             goalDto.setUserId(user.getId());
-            
+
             // Create goal
             Goal goal = GoalMapper.INSTANCE.toEntity(goalDto);
             goal = GoalService.setGoal(user, goal.getAmount());
-            
+
             response.setStatus(HttpServletResponse.SC_CREATED);
             writeResponse(response, GoalMapper.INSTANCE.toDto(goal));
         } catch (Exception e) {
@@ -99,81 +94,37 @@ public class GoalServlet extends BaseServlet {
         User user = authenticateUser(request, response);
         if (user == null) return;
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Goal ID is required");
-            return;
-        }
-        
+//        String pathInfo = request.getPathInfo();
+//        if (pathInfo == null || pathInfo.equals("/")) {
+//            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Goal ID is required");
+//            return;
+//        }
+
         try {
-            long goalId = Long.parseLong(pathInfo.substring(1));
             GoalDto goalDto = readRequestBody(request, GoalDto.class);
-            
+
             // Check if goal exists and belongs to user
             Goal goal = GoalService.getUserGoal(user);
             Goal found = goal;
-            
+
             if (found == null) {
                 writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Goal not found or does not belong to user");
                 return;
             }
             //FIXME!
-            // Update goal
-//            if (goalDto.getName() != null && !goalDto.getName().isEmpty()) {
-//                found.setName(goalDto.getName());
-//            }
-//
-//            if (goalDto.getTargetAmount() != null) {
-//                found.setTargetAmount(goalDto.getTargetAmount());
-//            }
-//
-//            if (goalDto.getCurrentAmount() != null) {
-//                found.setCurrentAmount(goalDto.getCurrentAmount());
-//            }
-//
-//            if (goalDto.getTargetDate() != null) {
-//                found.setTargetDate(goalDto.getTargetDate());
-//            }
-//
-//            Goal updated = GoalService.updateGoal(found);
-          //  writeResponse(response, GoalMapper.INSTANCE.toDto(updated));
+            //Update goal
+
+            if (goalDto.getAmount() != null) {
+                found.setAmount(goalDto.getAmount());
+            }
+
+            System.out.println(found.getId() + " " + found.getUserId() + " " + found.getAmount());
+            Goal updated = GoalService.setGoal(found);
+            writeResponse(response, GoalMapper.INSTANCE.toDto(updated));
         } catch (NumberFormatException e) {
             writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid goal ID");
         } catch (Exception e) {
             writeErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error updating goal: " + e.getMessage());
-        }
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = authenticateUser(request, response);
-        if (user == null) return;
-
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Goal ID is required");
-            return;
-        }
-        
-        try {
-            long goalId = Long.parseLong(pathInfo.substring(1));
-            
-            // Check if goal exists and belongs to user
-            Goal goal = GoalService.getUserGoal(user);
-
-
-            if (goal != null) {
-                writeErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Goal not found or does not belong to user");
-                return;
-            }
-            
-            // Delete goal
-           //FIXME! GoalService.deleteGoal(goalId);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (NumberFormatException e) {
-            writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid goal ID");
-        } catch (Exception e) {
-            writeErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deleting goal: " + e.getMessage());
         }
     }
 
@@ -183,18 +134,18 @@ public class GoalServlet extends BaseServlet {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
             return null;
         }
-        
+
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.getUserById(userId);
-        
+
         if (user == null) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return null;
         }
-        
+
         // Set user email for audit
         request.setAttribute("userEmail", user.getEmail());
-        
+
         return user;
     }
 }

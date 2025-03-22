@@ -61,6 +61,10 @@ public class TransactionService {
         return transactionRepository.findByUserId(user.getId()).orElse(null);
     }
 
+    public static Transaction getTransactionById(long transactionId) {
+        return transactionRepository.findById(transactionId).orElse(null);
+    }
+
     public static void changeDescription(User user, long transactionId, String newDescription) {
         transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), newDescription, transactionRepository.findById(transactionId).get().getAmount(), transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
     }
@@ -152,5 +156,9 @@ public class TransactionService {
                 .filter(t -> t.isIncome())
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public static Transaction updateTransaction(Transaction transaction) {
+        return transactionRepository.save(transaction);
     }
 }

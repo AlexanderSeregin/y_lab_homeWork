@@ -13,7 +13,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import website.ylab.learningplatform.config.LiquibaseConfig;
 import website.ylab.learningplatform.model.Notification;
 import website.ylab.learningplatform.model.User;
-import website.ylab.learningplatform.repository.impl.PostgresNotificationRepository;
 import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 import java.math.BigDecimal;
@@ -22,7 +21,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Testcontainers
 class NotificationServiceIntegrationTest {
@@ -33,12 +32,10 @@ class NotificationServiceIntegrationTest {
             .withPassword("test")
             .withExposedPorts(5432)
             .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))))
-            ;
-
-    private User testUser;
+                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))));
     private final BigDecimal INITIAL_BALANCE = new BigDecimal("1000.00");
     private final String TEST_NOTIFICATION_MESSAGE = "Test notification message";
+    private User testUser;
 
     @BeforeAll
     static void startContainer() {
@@ -73,7 +70,7 @@ class NotificationServiceIntegrationTest {
         testUser.setName("Test User");
         testUser.setPassword("testPassword");
         testUser.setBalance(INITIAL_BALANCE);
-        
+
         // Save the test user to the database
         PostgresUserRepository.getInstance().save(testUser);
     }
@@ -82,7 +79,7 @@ class NotificationServiceIntegrationTest {
     void getNotification_WithNoNotification_ShouldReturnNull() {
         // Act
         Notification result = NotificationService.getNotification(testUser);
-        
+
         // Assert
         assertNull(result, "Should return null when no notification exists");
     }

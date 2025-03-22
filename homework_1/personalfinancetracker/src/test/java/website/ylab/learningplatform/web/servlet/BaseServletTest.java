@@ -9,11 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -70,12 +66,12 @@ public class BaseServletTest {
         // Assert
         verify(response).setContentType("application/json");
         verify(response).setCharacterEncoding("UTF-8");
-        
+
         // Parse the response to verify it contains the expected data
         String jsonResponse = responseWriter.toString();
         ObjectMapper mapper = new ObjectMapper();
         TestDto resultDto = mapper.readValue(jsonResponse, TestDto.class);
-        
+
         assertEquals("Test User", resultDto.getName());
         assertEquals("test@example.com", resultDto.getEmail());
     }
@@ -93,7 +89,7 @@ public class BaseServletTest {
         verify(response).setStatus(status);
         verify(response).setContentType("application/json");
         verify(response).setCharacterEncoding("UTF-8");
-        
+
         // Verify the response contains the error message
         String jsonResponse = responseWriter.toString();
         assertTrue(jsonResponse.contains("\"error\":\"Invalid input\""));

@@ -32,11 +32,9 @@ class UserServiceIntegrationTest {
             .withPassword("test")
             .withExposedPorts(5432)
             .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))))
-            ;
-
-    private User testUser;
+                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))));
     private final BigDecimal INITIAL_BALANCE = new BigDecimal("1000.00");
+    private User testUser;
 
     @BeforeAll
     static void startContainer() {
@@ -71,7 +69,7 @@ class UserServiceIntegrationTest {
         testUser.setName("Test User");
         testUser.setPassword("testPassword");
         testUser.setBalance(INITIAL_BALANCE);
-        
+
         // Save the test user to the database
         PostgresUserRepository.getInstance().save(testUser);
     }
@@ -80,10 +78,10 @@ class UserServiceIntegrationTest {
     void userChangeEmail_ShouldUpdateEmail() {
         // Arrange
         String newEmail = "updated@example.com";
-        
+
         // Act
         UserService.userChangeEmail(testUser, newEmail);
-        
+
         // Assert
         Optional<User> updatedUser = PostgresUserRepository.getInstance().findById(testUser.getId());
         assertTrue(updatedUser.isPresent(), "User should exist after email update");
@@ -94,21 +92,21 @@ class UserServiceIntegrationTest {
     void userChangePassword_ShouldUpdatePassword() {
         // Arrange
         String newPassword = "newSecurePassword";
-        
+
         // Act
         UserService.userChangePassword(testUser, newPassword);
-        
+
         // Assert
         Optional<User> updatedUser = PostgresUserRepository.getInstance().findById(testUser.getId());
         assertTrue(updatedUser.isPresent(), "User should exist after password update");
         assertEquals(newPassword, updatedUser.get().getPasswordHash(), "Password should be updated");
     }
-    
+
     @Test
     void userDelete_ShouldRemoveUserFromDatabase() {
         // Act
         UserService.userDelete(testUser);
-        
+
         // Assert
         Optional<User> deletedUser = PostgresUserRepository.getInstance().findById(testUser.getId());
         assertFalse(deletedUser.isPresent(), "User should be deleted from the database");

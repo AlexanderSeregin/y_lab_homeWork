@@ -7,18 +7,17 @@ import java.math.BigDecimal;
 
 public class UserDto {
     private Long id;
-    
+
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
-    
+
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
-    
+
     private BigDecimal balance;
-    
-    // For response only - don't include in request validation
+
     private boolean isAdmin;
 
     public UserDto() {

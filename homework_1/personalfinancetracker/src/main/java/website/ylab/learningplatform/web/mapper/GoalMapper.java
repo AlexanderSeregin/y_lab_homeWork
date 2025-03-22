@@ -8,8 +8,8 @@ import website.ylab.learningplatform.web.dto.GoalDto;
 @Mapper
 public interface GoalMapper {
     GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
-    
+
     GoalDto toDto(Goal goal);
-    
+
     Goal toEntity(GoalDto goalDto);
 }

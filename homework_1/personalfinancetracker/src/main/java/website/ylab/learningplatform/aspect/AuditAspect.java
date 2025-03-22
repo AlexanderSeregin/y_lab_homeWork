@@ -8,7 +8,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 @Aspect
@@ -25,8 +24,8 @@ public class AuditAspect {
         String ipAddress = request.getRemoteAddr();
         String endpoint = request.getRequestURI();
         String httpMethod = request.getMethod();
-        
-        logger.info(String.format("[AUDIT] Time: %s | User: %s | IP: %s | Action: %s | Method: %s | Endpoint: %s", 
+
+        logger.info(String.format("[AUDIT] Time: %s | User: %s | IP: %s | Action: %s | Method: %s | Endpoint: %s",
                 LocalDateTime.now().format(formatter),
                 userEmail,
                 ipAddress,
@@ -34,10 +33,8 @@ public class AuditAspect {
                 httpMethod,
                 endpoint));
     }
-    
+
     private String getUserEmail(HttpServletRequest request) {
-        // In a real application, you would get this from the session or authentication token
-        // For simplicity, we'll use a header or attribute if available
         String userEmail = (String) request.getAttribute("userEmail");
         if (userEmail == null) {
             userEmail = request.getHeader("X-User-Email");

@@ -2,7 +2,6 @@ package website.ylab.learningplatform.web.servlet;
 
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.service.AuthService;
-import website.ylab.learningplatform.util.PasswordEncoder;
 import website.ylab.learningplatform.web.dto.UserDto;
 import website.ylab.learningplatform.web.mapper.UserMapper;
 
@@ -30,12 +29,12 @@ public class AuthServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo();
-        
+
         if (path == null || path.equals("/")) {
             writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid endpoint");
             return;
         }
-        
+
         switch (path) {
             case "/login":
                 doLogin(request, response);
@@ -54,10 +53,10 @@ public class AuthServlet extends BaseServlet {
     private void doLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             UserDto userDto = readRequestBody(request, UserDto.class);
-            
+
             // Simple validation for login
             if (userDto.getEmail() == null || userDto.getEmail().isEmpty() ||
-                userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
+                    userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Email and password are required");
                 return;
             }
@@ -67,10 +66,7 @@ public class AuthServlet extends BaseServlet {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("userEmail", user.getEmail());
-                
-                // Set user email for audit
-                //FIXME!request.setAttribute("userEmail", user.getEmail());
-                
+
                 // Return user data (without password)
                 UserDto responseDto = UserMapper.INSTANCE.toDto(user);
                 responseDto.setPassword(null); // Don't send password back
@@ -85,19 +81,19 @@ public class AuthServlet extends BaseServlet {
 
     /**
      * Handle a registration request.
-     *
+     * <p>
      * This method is responsible for validating the input, checking if the user
      * already exists, creating a new user and setting the user in the session.
      *
-     * @param request The {@link HttpServletRequest} containing the request
-     *                parameters.
+     * @param request  The {@link HttpServletRequest} containing the request
+     *                 parameters.
      * @param response The {@link HttpServletResponse} to send the response to.
      * @throws IOException If an IO error occurs.
      */
     private void doRegister(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             UserDto userDto = readRequestBody(request, UserDto.class);
-            
+
             // Validate user input
             Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
             if (!violations.isEmpty()) {
@@ -107,22 +103,22 @@ public class AuthServlet extends BaseServlet {
                 writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, errorMessage);
                 return;
             }
-            
+
             // Check if user already exists
             if (authService.isEmailRegistered(userDto.getEmail())) {
                 writeErrorResponse(response, HttpServletResponse.SC_CONFLICT, "Email already registered");
                 return;
             }
-            
+
             // Create user
             User user = UserMapper.INSTANCE.toEntity(userDto);
             boolean sucess = authService.register(user.getName(), user.getEmail(), user.getPassword());
-            
+
             // Set user in session
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getEmail());
-            
+
             // Set user email for audit
             request.setAttribute("userEmail", user.getEmail());
             if (!sucess) {

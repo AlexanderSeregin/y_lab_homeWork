@@ -20,7 +20,7 @@ public class PostgresTransactionRepository extends PostgresRepository<Transactio
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.transactions";
     private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.transactions WHERE user_id = ?";
     private static final String INSERT = "INSERT INTO finance_schema.transactions (id, user_id, is_income, category, amount, description) VALUES (?,? ,?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE finance_schema.transactions SET user_id = ?, category = ?, amount = ?, description = ?, transaction_date = ? WHERE id = ?";
+    private static final String UPDATE = "UPDATE finance_schema.transactions SET user_id = ?, is_income = ?, category = ?, amount = ?, description = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.transactions WHERE id = ?";
 
     private PostgresTransactionRepository() {
@@ -57,13 +57,12 @@ public class PostgresTransactionRepository extends PostgresRepository<Transactio
             ;
         } else {
             executeUpdate(UPDATE,
-                    transaction.getId(),
                     transaction.getUserId(),
                     transaction.isIncome(),
                     transaction.getCategory().toString(),
                     transaction.getAmount(),
                     transaction.getDescription(),
-                    transaction.getDate().getTime());
+                    transaction.getId());
         }
         return transaction;
     }

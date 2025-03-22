@@ -10,21 +10,21 @@ import java.util.Date;
 
 public class TransactionDto {
     private Long id;
-    
+
     private Long userId;
-    
+
     private boolean isIncome;
-    
+
     @NotBlank(message = "Description is required")
     private String description;
-    
+
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
-    
+
     @NotNull(message = "Category is required")
     private Category category;
-    
+
     private Date date;
 
     public TransactionDto() {
@@ -60,8 +60,8 @@ public class TransactionDto {
         return isIncome;
     }
 
-    public void setIncome(boolean income) {
-        isIncome = income;
+    public void setIncome(boolean isIncome) {
+        isIncome = isIncome;
     }
 
     public String getDescription() {

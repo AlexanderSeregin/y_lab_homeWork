@@ -1,46 +1,26 @@
 package website.ylab.learningplatform.web.dto;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class GoalDto {
     private Long id;
-    
     private Long userId;
-    
-    @NotBlank(message = "Name is required")
-    private String name;
-    
+
     @NotNull(message = "Target amount is required")
     @Positive(message = "Target amount must be positive")
-    private BigDecimal targetAmount;
-    
-    private BigDecimal currentAmount;
-    
-    private Date targetDate;
+    private BigDecimal amount;
 
     public GoalDto() {
     }
 
-    public GoalDto(Long id, Long userId, String name, BigDecimal targetAmount, BigDecimal currentAmount, Date targetDate) {
+    public GoalDto(Long id, Long userId, BigDecimal amount) {
         this.id = id;
         this.userId = userId;
-        this.name = name;
-        this.targetAmount = targetAmount;
-        this.currentAmount = currentAmount;
-        this.targetDate = targetDate;
+        this.amount = amount;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getUserId() {
         return userId;
@@ -50,35 +30,21 @@ public class GoalDto {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAmount(BigDecimal targetAmount) {
+        this.amount = targetAmount;
     }
 
-    public BigDecimal getTargetAmount() {
-        return targetAmount;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setTargetAmount(BigDecimal targetAmount) {
-        this.targetAmount = targetAmount;
-    }
-
-    public BigDecimal getCurrentAmount() {
-        return currentAmount;
-    }
-
-    public void setCurrentAmount(BigDecimal currentAmount) {
-        this.currentAmount = currentAmount;
-    }
-
-    public Date getTargetDate() {
-        return targetDate;
-    }
-
-    public void setTargetDate(Date targetDate) {
-        this.targetDate = targetDate;
+    public void setId(Long id) {
+        this.id = id;
     }
 }
