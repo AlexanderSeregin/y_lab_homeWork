@@ -1,40 +1,15 @@
 # Основной README файл.
 
-## Консольная версия приложения
-
-1. Уже собранный и работающий проект доступен через старый добрый TCP. Это консольное приложение. Просто ввод и вывод
-   перенаправляются.
-   Просто запускаем в терминале
-   nc test1.ev1l.ru 8186
-   или
-   telnet test1.ev1l.ru 8186 (стартует около 20 секунд)
-2. Сборка и запуск локально
-   docker-compose up -d (или на линуксе docker compose up -d)
-   далее можно или подключиться
-   nc localhost 8186
-   или запустить приложение внутри контейнера
-   docker exec -it personalfinancetracker-gradle-console-app-1 sh -c "java -jar /app/app.jar"
-3. Учётные записи для тестирования
-   email: user@user.com password: user
-   email: admin@admin.com password: admin
-4. База данных. Индексы добавил только на столбец с email таблицы users и столбец transaction_date
-   таблицы transactions (возможно тут составной индекс работал бы лучше, но врятле это принципиально).
-   Подключение к базе: postgresql://localhost:5234/finance_tracker (наружу порт не стандартный для отсутствия
-   конфликтов. Контейнеры подключаются на порт 5432).
-   login: finance_user password: finance_password
-4. Самокритика.
-   В Testcontainers использовал статический порт. Уже потом понял, что это неправильно и почему...
-   <Здесь было ещё много самокритики :)>
-
-**Сервлеты**:
-
-- `/api/auth/*` - Авторизация и регистрация пользователей
-- `/api/users/*` - Управление пользователями
-- `/api/transactions/*` - Управление транзакциями
-- `/api/budgets/*` - Управление бюджетами
-- `/api/goals/*` - Управление целями
-- `/api/notifications/*` - Управление уведомлениями
-
-
-- email: user@user.com password: user
-- email: admin@admin.com password: admin
+1. Я реализовал сессионную авторизацию пользователя.
+2. Хранить логи аудита в продакшн базе мне показалось плохой идеей, поэтому прикрутил ELK.
+3. Две коллекции постмана лежат в корне проекта.
+RemotePersonalFinancialTracker - для проверки размещённого у меня проекта, второй - для локального запуска
+4. Запуск локально: (на Макос docker-compose через дефис)
+* cd homework_1/docker-elk-main
+* docker compose up setup
+* docker compose up -d
+* cd ../personalfinancetracker/
+* docker compose up
+5. Само приложение доступно на порту 8080 (test2.ev1l.ru или localhost)
+Логи доступны на http://localhost:5601/app/logs или http://test2.ev1l.ru:5601/app/logs логин elastic пароль veryHardPass
+6. api управления пользовалятелями и несколько старых замечаний в процессе...
