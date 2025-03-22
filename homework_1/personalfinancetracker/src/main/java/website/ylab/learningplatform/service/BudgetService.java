@@ -1,18 +1,19 @@
 package website.ylab.learningplatform.service;
 
-import website.ylab.learningplatform.datasource.BudgetDao;
 import website.ylab.learningplatform.model.Budget;
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.repository.BudgetRepository;
+import website.ylab.learningplatform.repository.impl.PostgresBudgetRepository;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 public class BudgetService {
-
+    private static final BudgetRepository budgetRepository = PostgresBudgetRepository.getInstance();
 
     public static void checkBudget(User user) {
         BigDecimal sum = TransactionService.getSumOfUserSpendingsInCurrentMonth(user);
-        Optional<Budget> budgetOptional = BudgetDao.getInstance().get(user.getId());
+        Optional<Budget> budgetOptional = budgetRepository.findByUserId(user.getId());
         if (budgetOptional.isEmpty()) {
             return;
         }
@@ -23,7 +24,7 @@ public class BudgetService {
     }
 
     public static BigDecimal getBudget(User user) {
-        Optional<Budget> budgetOptional = BudgetDao.getInstance().get(user.getId());
+        Optional<Budget> budgetOptional = budgetRepository.findByUserId(user.getId());
         if (budgetOptional.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -31,6 +32,18 @@ public class BudgetService {
     }
 
     public static void setBudget(User user, BigDecimal newBudget) {
-        BudgetDao.getInstance().save(user.getId(), new Budget(newBudget));
+        budgetRepository.save(new Budget(user.getId(), newBudget));
+    }
+
+    public static Budget getUserBudget(User user) {
+        Optional<Budget> budgetOptional = budgetRepository.findByUserId(user.getId());
+        if (budgetOptional.isEmpty()) {
+            return null;
+        }
+        return budgetOptional.get();
+    }
+
+    public static Budget updateBudget(Budget budget) {
+        return budgetRepository.save(budget);
     }
 }

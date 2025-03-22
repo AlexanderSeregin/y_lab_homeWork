@@ -29,6 +29,7 @@ public class UserMenuController {
      * <li>Exit</li>
      * </ol>
      * The method will then read the user's choice and perform the corresponding action.
+     *
      * @param user the user that is logged in
      */
     public static void showUserMenu(User user) {

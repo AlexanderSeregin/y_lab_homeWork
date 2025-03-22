@@ -4,77 +4,104 @@ import java.math.BigDecimal;
 
 public class User {
     private static long counter = 0;
-    private long id;
-    private String name;
+    private boolean isAdmin;
+    private Long id;
+    private String username;
     private String email;
     private String passwordHash;
-    private final boolean isAdmin;
-    private final boolean isBlocked;
+    private boolean isBlocked;
     private BigDecimal balance;
 
-    public User(String name, String email, String passwordHash) {
+    public User(String username, String email, String passwordHash) {
         this.id = ++counter;
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.isAdmin = false;
         this.isBlocked = false;
-        this.balance = new BigDecimal(0);
+        this.balance = BigDecimal.ZERO;
     }
 
-    public User(String name, String email, String passwordHash, boolean isAdmin, boolean isBlocked, BigDecimal balance) {
+    public User(String username, String email, String passwordHash, boolean isAdmin, boolean isBlocked, BigDecimal balance) {
         this.id = ++counter;
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.isAdmin = isAdmin;
         this.isBlocked = isBlocked;
-        this.balance = balance;
+        this.balance = balance != null ? balance : BigDecimal.ZERO;
     }
 
-    // getters / setters / toString()
+    public User() {
+        this.id = ++counter;
+        this.isAdmin = false;
+        this.isBlocked = false;
+        this.balance = BigDecimal.ZERO;
+    }
 
-    public long getId() {
+    /**
+     * Checks if the user has enough balance for a withdrawal
+     *
+     * @param amount amount to check
+     * @return true if user has enough balance
+     */
+    public boolean hasEnoughBalance(BigDecimal amount) {
+        return balance.compareTo(amount) >= 0;
+    }
+
+    /**
+     * Add amount to user balance
+     *
+     * @param amount amount to add (positive for deposit, negative for withdrawal)
+     * @throws IllegalArgumentException if trying to withdraw more than available balance
+     */
+    public void updateBalance(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0 && !hasEnoughBalance(amount.abs())) {
+            throw new IllegalArgumentException("Insufficient funds: available " + balance + ", trying to withdraw " + amount.abs());
+        }
+        this.balance = this.balance.add(amount);
+    }
+
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public Object getPasswordHash() {
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPasswordHash() {
         return passwordHash;
     }
 
-    public void setEmail(String newEmail) {
-        this.email = newEmail;
-    }
-
-    /**
-     * Returns the name of the user.
-     *
-     * @return the name of the user
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the name of the user.
-     *
-     * @param newName the new name of the user
-     */
-    public void setName(String newName) {
-        this.name = newName;
-    }
-
-    /**
-     * Sets the password hash for the user.
-     *
-     * @param passwordHash the new password hash
-     */
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    /**
+     * Returns the username of the user.
+     *
+     * @return the username of the user
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username of the user.
+     *
+     * @param username the new username of the user
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -86,11 +113,6 @@ public class User {
         return balance;
     }
 
-    /**
-     * Sets the balance of the user.
-     *
-     * @param balance the balance of the user
-     */
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
@@ -100,10 +122,18 @@ public class User {
      *
      * @return true if the user is blocked, false otherwise
      */
-    public boolean getIsBlocked() {
+    public boolean isBlocked() {
         return isBlocked;
     }
 
+    /**
+     * Sets the blocked status of the user.
+     *
+     * @param blocked true if the user should be blocked, false otherwise
+     */
+    public void setBlocked(boolean blocked) {
+        this.isBlocked = blocked;
+    }
 
     /**
      * Returns true if the user is an administrator, false otherwise.
@@ -114,21 +144,27 @@ public class User {
         return isAdmin;
     }
 
-    /**
-     * Sets the blocked status of the user.
-     *
-     * @param isBlocked true if the user should be blocked, false otherwise
-     */
-    public void setIsBlocked(boolean isBlocked) {
-        isBlocked = isBlocked;
+    public String getName() {
+        return username;
     }
 
-    /**
-     * Sets the user's ID.
-     *
-     * @param id the ID to set
-     */
-    public void setId(long id) {
-        this.id = id;
+    public void setName(String newName) {
+        this.username = newName;
+    }
+
+    public boolean getIsBlocked() {
+        return isBlocked;
+    }
+
+    public void setIsBlocked(boolean b) {
+        this.isBlocked = b;
+    }
+
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    public void setPassword(String password) {
+        this.passwordHash = password;
     }
 }

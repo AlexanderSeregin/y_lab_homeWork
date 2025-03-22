@@ -1,9 +1,10 @@
 package website.ylab.learningplatform.view;
 
-import website.ylab.learningplatform.datasource.NotificationDao;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Goal;
+import website.ylab.learningplatform.model.Notification;
 import website.ylab.learningplatform.model.User;
+import website.ylab.learningplatform.service.NotificationService;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -35,10 +36,11 @@ public class UserView {
     }
 
     public static void printNotification(User user) {
-        while (!NotificationDao.getInstance().get(user.getId()).isEmpty()) {
-            NotificationDao.getInstance().get(user.getId()).ifPresent(notification ->
-                    UserView.printNotification(notification.getMessage()));
+        Notification notification = null;
+        while ((notification = NotificationService.getNotification(user)) != null) {
+            printNotification(notification.getMessage());
         }
+
     }
 
     public static void printTransactionMenu(User user) {

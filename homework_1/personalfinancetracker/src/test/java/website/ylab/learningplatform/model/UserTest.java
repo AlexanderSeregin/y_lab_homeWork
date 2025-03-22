@@ -1,129 +1,123 @@
 package website.ylab.learningplatform.model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class UserTest {
 
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User("Test User", "test@test.com", "hashedPassword");
+    }
+
     @Test
-    void testConstructorWithBasicParameters() {
-        // Arrange
-        String name = "John Doe";
-        String email = "john.doe@example.com";
-        String passwordHash = "hashedPassword123";
-
-        // Act
-        User user = new User(name, email, passwordHash);
-
-        // Assert
-        assertNotEquals(0, user.getId());
-        assertEquals(name, user.getName());
-        assertEquals(email, user.getEmail());
-        assertEquals(passwordHash, user.getPasswordHash());
+    void constructor_WithDefaultValues_ShouldSetCorrectly() {
+        assertNotNull(user.getId());
+        assertEquals("Test User", user.getUsername());
+        assertEquals("test@test.com", user.getEmail());
+        assertEquals("hashedPassword", user.getPasswordHash());
         assertFalse(user.isAdmin());
-        assertFalse(user.getIsBlocked());
-        assertEquals(new BigDecimal(0), user.getBalance());
+        assertFalse(user.isBlocked());
+        assertEquals(BigDecimal.ZERO, user.getBalance());
     }
 
     @Test
-    void testConstructorWithAllParameters() {
-        // Arrange
-        String name = "Admin User";
-        String email = "admin@example.com";
-        String passwordHash = "adminHashedPassword123";
-        boolean isAdmin = true;
-        boolean isBlocked = false;
-        BigDecimal balance = new BigDecimal("100.50");
+    void constructor_WithAllParameters_ShouldSetCorrectly() {
+        User customUser = new User("Custom User", "custom@test.com", "customPassword", true, true, BigDecimal.valueOf(1000));
 
-        // Act
-        User user = new User(name, email, passwordHash, isAdmin, isBlocked, balance);
-
-        // Assert
-        assertNotEquals(0, user.getId());
-        assertEquals(name, user.getName());
-        assertEquals(email, user.getEmail());
-        assertEquals(passwordHash, user.getPasswordHash());
-        assertTrue(user.isAdmin());
-        assertFalse(user.getIsBlocked());
-        assertEquals(balance, user.getBalance());
+        assertNotNull(customUser.getId());
+        assertEquals("Custom User", customUser.getUsername());
+        assertEquals("custom@test.com", customUser.getEmail());
+        assertEquals("customPassword", customUser.getPasswordHash());
+        assertTrue(customUser.isAdmin());
+        assertTrue(customUser.isBlocked());
+        assertEquals(BigDecimal.valueOf(1000), customUser.getBalance());
     }
 
     @Test
-    void testIdIncrementsWithNewUsers() {
-        // Act
-        User user1 = new User("User1", "user1@example.com", "hash1");
-        User user2 = new User("User2", "user2@example.com", "hash2");
-
-        // Assert
-        assertTrue(user2.getId() > user1.getId());
+    void hasEnoughBalance_WithSufficientFunds_ShouldReturnTrue() {
+        user.setBalance(BigDecimal.valueOf(1000));
+        assertTrue(user.hasEnoughBalance(BigDecimal.valueOf(500)));
     }
 
     @Test
-    void testSetName() {
-        // Arrange
-        User user = new User("Initial Name", "email@example.com", "hash");
-        String newName = "Updated Name";
-
-        // Act
-        user.setName(newName);
-
-        // Assert
-        assertEquals(newName, user.getName());
+    void hasEnoughBalance_WithInsufficientFunds_ShouldReturnFalse() {
+        user.setBalance(BigDecimal.valueOf(100));
+        assertFalse(user.hasEnoughBalance(BigDecimal.valueOf(500)));
     }
 
     @Test
-    void testSetEmail() {
-        // Arrange
-        User user = new User("Test User", "initial@example.com", "hash");
-        String newEmail = "updated@example.com";
+    void hasEnoughBalance_WithEqualAmount_ShouldReturnTrue() {
+        user.setBalance(BigDecimal.valueOf(500));
+        assertTrue(user.hasEnoughBalance(BigDecimal.valueOf(500)));
+    }
 
-        // Act
+    @Test
+    void updateBalance_WithValidDeposit_ShouldIncreaseBalance() {
+        user.setBalance(BigDecimal.valueOf(1000));
+        user.updateBalance(BigDecimal.valueOf(500));
+        assertEquals(BigDecimal.valueOf(1500), user.getBalance());
+    }
+
+    @Test
+    void updateBalance_WithValidWithdrawal_ShouldDecreaseBalance() {
+        user.setBalance(BigDecimal.valueOf(1000));
+        user.updateBalance(BigDecimal.valueOf(-500));
+        assertEquals(BigDecimal.valueOf(500), user.getBalance());
+    }
+
+    @Test
+    void updateBalance_WithInsufficientFunds_ShouldThrowException() {
+        user.setBalance(BigDecimal.valueOf(100));
+        assertThrows(IllegalArgumentException.class, () ->
+                user.updateBalance(BigDecimal.valueOf(-500))
+        );
+    }
+
+    @Test
+    void setEmail_ShouldUpdateEmail() {
+        String newEmail = "newemail@test.com";
         user.setEmail(newEmail);
-
-        // Assert
         assertEquals(newEmail, user.getEmail());
     }
 
     @Test
-    void testSetPasswordHash() {
-        // Arrange
-        User user = new User("Test User", "email@example.com", "initialHash");
-        String newPasswordHash = "updatedHash";
-
-        // Act
-        user.setPasswordHash(newPasswordHash);
-
-        // Assert
-        assertEquals(newPasswordHash, user.getPasswordHash());
+    void setUsername_ShouldUpdateUsername() {
+        String newUsername = "New Test User";
+        user.setUsername(newUsername);
+        assertEquals(newUsername, user.getUsername());
     }
 
     @Test
-    void testSetBalance() {
-        // Arrange
-        User user = new User("Test User", "email@example.com", "hash");
-        BigDecimal newBalance = new BigDecimal("250.75");
-
-        // Act
-        user.setBalance(newBalance);
-
-        // Assert
-        assertEquals(newBalance, user.getBalance());
+    void setPassword_ShouldUpdatePasswordHash() {
+        String newPassword = "newHashedPassword";
+        user.setPassword(newPassword);
+        assertEquals(newPassword, user.getPasswordHash());
     }
 
+    @Test
+    void setBlocked_ShouldUpdateBlockedStatus() {
+        assertFalse(user.isBlocked());
+        user.setBlocked(true);
+        assertTrue(user.isBlocked());
+    }
 
     @Test
-    void testSetId() {
-        // Arrange
-        User user = new User("Test User", "email@example.com", "hash");
-        long newId = 1000L;
+    void getName_ShouldReturnUsername() {
+        assertEquals(user.getUsername(), user.getName());
+    }
 
-        // Act
-        user.setId(newId);
-
-        // Assert
-        assertEquals(newId, user.getId());
+    @Test
+    void setName_ShouldUpdateUsername() {
+        String newName = "New Name";
+        user.setName(newName);
+        assertEquals(newName, user.getUsername());
+        assertEquals(newName, user.getName());
     }
 }
