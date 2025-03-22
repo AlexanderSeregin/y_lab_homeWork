@@ -5,8 +5,10 @@ services:
     build: .
     ports:
       - "8080:8080"
-    # Дополнительно можно указать restart-политику
-    # restart: unless-stopped
+    networks:
+      - pft
+    restart: unless-stopped
+
   postgres:
     image: postgres:13.4
     container_name: finance_tracker_postgres
@@ -16,6 +18,8 @@ services:
       POSTGRES_PASSWORD: finance_password
     ports:
       - "5432:5432"
+    networks:
+      - pft
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -23,6 +27,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+networks:
+  pft:
+    name: elk
+    external: true
 
 volumes:
   postgres_data:
