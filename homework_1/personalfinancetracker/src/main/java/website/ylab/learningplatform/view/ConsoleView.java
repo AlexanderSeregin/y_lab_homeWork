@@ -3,10 +3,10 @@ package website.ylab.learningplatform.view;
 import website.ylab.learningplatform.model.Category;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class ConsoleView {
     private static final Scanner scanner = new Scanner(System.in);
@@ -25,7 +25,7 @@ public class ConsoleView {
             printError("Выберите 1 из пунктов меню.");
         }
         int value = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // считываем остаток строки
         return value;
     }
 
@@ -44,7 +44,7 @@ public class ConsoleView {
             printError("Введите число.");
         }
         BigDecimal value = scanner.nextBigDecimal();
-        scanner.nextLine();
+        scanner.nextLine(); // считываем остаток строки
         return value;
     }
 
@@ -54,7 +54,7 @@ public class ConsoleView {
             printError("Выберите 1 из пунктов меню.");
         }
         int value = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // считываем остаток строки
         return Category.values()[value];
     }
 
@@ -64,7 +64,7 @@ public class ConsoleView {
             printError("Введите число.");
         }
         long value = scanner.nextLong();
-        scanner.nextLine();
+        scanner.nextLine(); // считываем остаток строки
         return value;
     }
 
@@ -90,7 +90,7 @@ public class ConsoleView {
             printError("Неверный формат даты. Попробуйте снова.");
             return readDate();
         }
-        scanner.nextLine();
+        scanner.nextLine(); // считываем остаток строки
         return value;
     }
 }

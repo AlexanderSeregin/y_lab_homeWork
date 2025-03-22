@@ -1,21 +1,18 @@
 package website.ylab.learningplatform.service;
 
+import website.ylab.learningplatform.datasource.TransactionDao;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
-import website.ylab.learningplatform.repository.TransactionRepository;
-import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.repository.impl.PostgresTransactionRepository;
-import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TransactionService {
-    private static TransactionRepository transactionRepository = PostgresTransactionRepository.getInstance();
-    private static UserRepository userRepository = PostgresUserRepository.getInstance();
-
     public static void newTransaction(User user, boolean isIncome, BigDecimal amount, Category category, Date date, String description) {
         if (BigDecimal.ZERO.compareTo(amount) > 0) {
             throw new IllegalArgumentException("Amount cannot be negative");
@@ -27,8 +24,7 @@ public class TransactionService {
             amount = amount.negate();
         }
         user.setBalance(user.getBalance().add(amount));
-        userRepository.save(user);
-        transactionRepository.save(new Transaction(user.getId(), isIncome, description, amount, category, date));
+        TransactionDao.getInstance().save(new Transaction(user.getId(), isIncome, description, amount, category, date));
         BudgetService.checkBudget(user);
     }
 
@@ -47,42 +43,63 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return transactions.get().stream()
+        List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
+
+        return transactions.stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public static Iterable<Transaction> getUserTransactions(User user) {
-        return transactionRepository.findByUserId(user.getId()).orElse(null);
-    }
-
-    public static Transaction getTransactionById(long transactionId) {
-        return transactionRepository.findById(transactionId).orElse(null);
+        return TransactionDao.getInstance().getTransactionsByUser(user);
     }
 
     public static void changeDescription(User user, long transactionId, String newDescription) {
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), newDescription, transactionRepository.findById(transactionId).get().getAmount(), transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
+        TransactionDao.getInstance().get(user.getId())
+                .ifPresent(transactions -> transactions.stream()
+                        .filter(t -> t.getId() == transactionId)
+                        .findFirst()
+                        .ifPresent(t -> t.setDescription(newDescription))
+                );
     }
 
     public static void changeAmount(User user, long transactionId, BigDecimal newAmount) {
-        BigDecimal oldAmount = transactionRepository.findById(transactionId).get().getAmount();
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), newAmount, transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
+        BigDecimal oldAmount = TransactionDao.getInstance().get(user.getId())
+                .map(transactions -> transactions.stream()
+                        .filter(t -> t.getId() == transactionId)
+                        .findFirst()
+                        .map(Transaction::getAmount)
+                        .orElse(BigDecimal.ZERO))
+                .orElse(BigDecimal.ZERO);
+        TransactionDao.getInstance().get(user.getId())
+                .ifPresent(transactions -> transactions.stream()
+                        .filter(t -> t.getId() == transactionId)
+                        .findFirst()
+                        .ifPresent(t -> t.setAmount(newAmount))
+                );
         user.setBalance(user.getBalance().subtract(newAmount.subtract(oldAmount)));
-        userRepository.save(user);
     }
 
     public static void changeCategory(User user, long transactionId, Category newCategory) {
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), transactionRepository.findById(transactionId).get().getAmount(), newCategory, transactionRepository.findById(transactionId).get().getDate()));
+        TransactionDao.getInstance().get(user.getId())
+                .ifPresent(transactions -> transactions.stream()
+                        .filter(t -> t.getId() == transactionId)
+                        .findFirst()
+                        .ifPresent(t -> t.setCategory(newCategory))
+                );
     }
 
     public static void deleteTransaction(User user, long transactionToDeleteId) {
-        BigDecimal amount = transactionRepository.findById(transactionToDeleteId).get().getAmount();
-        transactionRepository.deleteById(transactionToDeleteId);
+        BigDecimal amount = TransactionDao.getInstance().get(user.getId())
+                .map(transactions -> transactions.stream()
+                        .filter(t -> t.getId() == transactionToDeleteId)
+                        .findFirst()
+                        .map(Transaction::getAmount)
+                        .orElse(BigDecimal.ZERO))
+                .orElse(BigDecimal.ZERO);
+        TransactionDao.getInstance().get(user.getId())
+                .ifPresent(transactions -> transactions.removeIf(t -> t.getId() == transactionToDeleteId));
         user.setBalance(user.getBalance().add(amount));
     }
 
@@ -97,11 +114,11 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions.isEmpty()) {
-            return BigDecimal.ZERO;
+        List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
+        if (transactions == null) {
+            return null;
         }
-        return transactions.get().stream()
+        return transactions.stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
                 .filter(t -> !t.isIncome())
                 .map(Transaction::getAmount)
@@ -119,25 +136,22 @@ public class TransactionService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date startOfMonth = calendar.getTime();
 
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions.isEmpty()) {
-            return new HashMap<>();
+        List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
+        if (transactions == null) {
+            return null;
         }
-        return transactions.get().stream()
+        return transactions.stream()
                 .filter(t -> t.getDate().after(startOfMonth) || t.getDate().equals(startOfMonth))
                 .filter(t -> !t.isIncome())
-                .collect(Collectors.groupingBy(
-                        Transaction::getCategory,
-                        Collectors.reducing(BigDecimal.ZERO, t -> t.getAmount().abs(), BigDecimal::add)
-                ));
+                .collect(Collectors.groupingBy(Transaction::getCategory, Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)));
     }
 
     public static BigDecimal getSumOfUserSpendingsForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions.isEmpty()) {
+        List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
+        if (transactions == null) {
             return BigDecimal.ZERO;
         }
-        return transactions.get().stream()
+        return transactions.stream()
                 .filter(t -> t.getDate().after(from) || t.getDate().equals(from))
                 .filter(t -> t.getDate().before(to) || t.getDate().equals(to))
                 .filter(t -> !t.isIncome())
@@ -146,19 +160,15 @@ public class TransactionService {
     }
 
     public static BigDecimal getSumOfUserIncomeForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
-        if (transactions.isEmpty()) {
+        List<Transaction> transactions = TransactionDao.getInstance().getTransactionsByUser(user);
+        if (transactions == null) {
             return BigDecimal.ZERO;
         }
-        return transactions.get().stream()
+        return transactions.stream()
                 .filter(t -> t.getDate().after(from) || t.getDate().equals(from))
                 .filter(t -> t.getDate().before(to) || t.getDate().equals(to))
                 .filter(t -> t.isIncome())
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public static Transaction updateTransaction(Transaction transaction) {
-        return transactionRepository.save(transaction);
     }
 }
