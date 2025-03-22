@@ -1,5 +1,5 @@
 # Этап сборки
-FROM gradle:7.6-jdk17 AS builder
+FROM gradle:jdk17-corretto AS builder
 WORKDIR /app
 COPY . .
 RUN gradle build -x test --no-daemon
@@ -7,8 +7,6 @@ RUN gradle build -x test --no-daemon
 
 FROM openjdk:17-slim
 WORKDIR /app
-
-# Устанавливаем tcpserver (ucspi-tcp)
 
 
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
