@@ -160,6 +160,10 @@ public class User {
         this.isBlocked = b;
     }
 
+    public String getPassword() {
+        return passwordHash;
+    }
+
     public void setPassword(String password) {
         this.passwordHash = password;
     }

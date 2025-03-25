@@ -18,7 +18,7 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.goals";
     private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.goals WHERE user_id = ?";
     private static final String INSERT = "INSERT INTO finance_schema.goals (id, user_id, target_amount) VALUES (?, ?, ?)";
-    private static final String UPDATE = "UPDATE finance_schema.goals SET user_id = ?, name = ?, target_amount = ?, current_amount = ?, target_date = ?, description = ?, is_completed = ? WHERE id = ?";
+    private static final String UPDATE = "UPDATE finance_schema.goals SET target_amount = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.goals WHERE id = ?";
 
     private PostgresGoalRepository() {
@@ -49,9 +49,8 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
                     goal.getAmount());
         } else {
             executeUpdate(UPDATE,
-                    goal.getId(),
-                    goal.getUserId(),
-                    goal.getAmount());
+                    goal.getAmount(),
+                    goal.getId());
         }
         return goal;
     }

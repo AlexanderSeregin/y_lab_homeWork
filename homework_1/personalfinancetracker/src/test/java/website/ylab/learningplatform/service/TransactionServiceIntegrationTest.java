@@ -38,12 +38,10 @@ class TransactionServiceIntegrationTest {
             .withPassword("test")
             .withExposedPorts(5432)
             .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))))
-            ;
-
-    private User testUser;
+                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))));
     private final BigDecimal INITIAL_BALANCE = new BigDecimal("1000.00");
     private final BigDecimal TRANSACTION_AMOUNT = new BigDecimal("100.00");
+    private User testUser;
 
     @BeforeAll
     static void startContainer() {
@@ -64,7 +62,7 @@ class TransactionServiceIntegrationTest {
                 postgres.getUsername(),
                 postgres.getPassword());
              Statement stmt = conn.createStatement()) {
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to set up test data", e);
         }
@@ -93,14 +91,13 @@ class TransactionServiceIntegrationTest {
         Optional<List<Transaction>> transactions = PostgresTransactionRepository.getInstance().findByUserId(testUser.getId());
         assertTrue(transactions.isPresent(), "Transactions should exist");
         assertFalse(transactions.get().isEmpty(), "Transaction list should not be empty");
-        
+
         Transaction transaction = transactions.get().get(0);
         assertEquals(0, TRANSACTION_AMOUNT.negate().compareTo(transaction.getAmount()),
                 "Transaction amount should be negative for expense");
         assertFalse(transaction.isIncome(), "Transaction should be marked as expense");
         assertEquals(Category.GROCERIES, transaction.getCategory());
     }
-
 
 
     @Test

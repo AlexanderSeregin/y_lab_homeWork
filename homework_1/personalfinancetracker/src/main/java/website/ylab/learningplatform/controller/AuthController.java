@@ -9,7 +9,7 @@ import website.ylab.learningplatform.view.AuthView;
 
 public class AuthController {
     private final AuthService authService;
-    private final AuthView authView; // View для аутентификации
+    private final AuthView authView;
 
     public AuthController() {
         this.authService = new AuthService();
@@ -26,16 +26,10 @@ public class AuthController {
      * </p>
      */
     public void register() {
-        // Контроллер просит View показать форму регистрации
         String name = authView.askName();
         String email = authView.askEmail();
         String password = authView.askPassword();
-
-
-        // Контроллер вызывает метод из Model (через AuthService)
         boolean result = authService.register(name, email, password);
-
-        // В зависимости от результата выводим пользователю нужное сообщение
         if (result) {
             authView.showRegistrationSuccess();
         } else {

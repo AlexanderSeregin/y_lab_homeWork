@@ -4,24 +4,19 @@ import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.*;
-import org.junit.runners.MethodSorters;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import website.ylab.learningplatform.config.LiquibaseConfig;
-import website.ylab.learningplatform.model.User;
-import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 import website.ylab.learningplatform.util.PasswordEncoder;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.testcontainers.utility.Base58.randomString;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -34,13 +29,11 @@ class AuthServiceIntegrationTest {
             .withPassword("test")
             .withExposedPorts(5432)
             .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))))
-            ;
-
-    private AuthService authService;
+                    new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(5432), new ExposedPort(5432)))));
     private final String TEST_NAME = "Test User";
-    private String TEST_EMAIL = "test@example.com";
     private final String TEST_PASSWORD = "testPassword";
+    private AuthService authService;
+    private String TEST_EMAIL = "test@example.com";
 
     @BeforeAll
     static void startContainer() {
@@ -66,7 +59,7 @@ class AuthServiceIntegrationTest {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to set up test data", e);
         }
-        TEST_EMAIL = "test"+randomString(10)+"+@example.com";
+        TEST_EMAIL = "test" + randomString(10) + "+@example.com";
         authService = new AuthService();
     }
 

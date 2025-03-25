@@ -4,9 +4,11 @@ services:
   gradle-console-app:
     build: .
     ports:
-      - "8186:8186"
-    # Дополнительно можно указать restart-политику
-    # restart: unless-stopped
+      - "8080:8080"
+    networks:
+      - pft
+    restart: unless-stopped
+
   postgres:
     image: postgres:13.4
     container_name: finance_tracker_postgres
@@ -15,14 +17,21 @@ services:
       POSTGRES_USER: finance_user
       POSTGRES_PASSWORD: finance_password
     ports:
-      - "5234:5432"
+      - "5432:5432"
+    networks:
+      - pft
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U finance_user -d finance_tracker"]
+      test: [ "CMD-SHELL", "pg_isready -U finance_user -d finance_tracker" ]
       interval: 10s
       timeout: 5s
       retries: 5
+
+networks:
+  pft:
+    name: elk
+    external: true
 
 volumes:
   postgres_data:

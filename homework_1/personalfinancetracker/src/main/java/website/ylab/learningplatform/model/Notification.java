@@ -1,9 +1,12 @@
 package website.ylab.learningplatform.model;
 
 public class Notification {
-    private final String message;
+    private String message;
     private long id;
     private long userId;
+
+    public Notification() {
+    }
 
     public Notification(String message) {
         this.message = message;
@@ -32,7 +35,7 @@ public class Notification {
         this.id = notificationId;
     }
 
-    public Object getUserId() {
+    public long getUserId() {
         return userId;
     }
 }

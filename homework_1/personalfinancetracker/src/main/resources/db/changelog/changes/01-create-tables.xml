@@ -50,7 +50,6 @@
     </changeSet>
 
 
-
     <!-- Create transactions table -->
     <changeSet id="04-create-transaction-table" author="ylab">
         <createTable tableName="transactions" schemaName="finance_schema">
@@ -76,7 +75,8 @@
         </createTable>
     </changeSet>
     <changeSet id="02-create-transaction-table-index" author="ylab">
-        <createIndex indexName="ix_transaction_date" unique="false" tableName="transactions" schemaName="finance_schema">
+        <createIndex indexName="ix_transaction_date" unique="false" tableName="transactions"
+                     schemaName="finance_schema">
             <column name="transaction_date"/>
         </createIndex>
     </changeSet>

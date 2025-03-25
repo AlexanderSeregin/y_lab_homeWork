@@ -2,15 +2,16 @@ package website.ylab.learningplatform.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BudgetTest {
 
-    private Budget budget;
     private final Long userId = 1L;
     private final BigDecimal amount = BigDecimal.valueOf(1000);
+    private Budget budget;
 
     @BeforeEach
     void setUp() {

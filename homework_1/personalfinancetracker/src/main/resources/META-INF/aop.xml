@@ -1,0 +1,11 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver>
+        <include within="website.ylab.learningplatform..*"/>
+    </weaver>
+    <aspects>
+        <!-- declare two aspects to the weaver -->
+        <aspect name="website.ylab.learningplatform.aspect.LoggingAspect"/>
+        <aspect name="website.ylab.learningplatform.aspect.AuditAspect"/>
+    </aspects>
+</aspectj>

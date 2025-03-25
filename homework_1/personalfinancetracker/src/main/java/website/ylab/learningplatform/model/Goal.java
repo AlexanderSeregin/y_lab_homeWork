@@ -7,6 +7,9 @@ public class Goal {
     private Long userId;
     private BigDecimal amount;
 
+    public Goal() {
+    }
+
     public Goal(BigDecimal newGoal) {
         this.amount = newGoal;
     }

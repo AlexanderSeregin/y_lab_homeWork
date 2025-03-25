@@ -30,7 +30,7 @@ class UserTest {
     @Test
     void constructor_WithAllParameters_ShouldSetCorrectly() {
         User customUser = new User("Custom User", "custom@test.com", "customPassword", true, true, BigDecimal.valueOf(1000));
-        
+
         assertNotNull(customUser.getId());
         assertEquals("Custom User", customUser.getUsername());
         assertEquals("custom@test.com", customUser.getEmail());
@@ -75,8 +75,8 @@ class UserTest {
     @Test
     void updateBalance_WithInsufficientFunds_ShouldThrowException() {
         user.setBalance(BigDecimal.valueOf(100));
-        assertThrows(IllegalArgumentException.class, () -> 
-            user.updateBalance(BigDecimal.valueOf(-500))
+        assertThrows(IllegalArgumentException.class, () ->
+                user.updateBalance(BigDecimal.valueOf(-500))
         );
     }
 

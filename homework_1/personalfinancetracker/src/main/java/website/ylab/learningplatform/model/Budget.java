@@ -41,4 +41,5 @@ public class Budget {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
 }

@@ -33,4 +33,12 @@ public class AuthService {
         return user.isPresent() && user.get().getPasswordHash().equals(passwordHash) && !user.get().getIsBlocked();
     }
 
+    public User loginUser(String email, String passwordHash) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.get();
+    }
+
+    public boolean isEmailRegistered(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
 }
