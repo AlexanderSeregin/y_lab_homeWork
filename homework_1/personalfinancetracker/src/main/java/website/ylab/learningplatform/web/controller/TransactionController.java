@@ -13,8 +13,6 @@ import website.ylab.learningplatform.service.UserService;
 import website.ylab.learningplatform.web.dto.TransactionDto;
 import website.ylab.learningplatform.web.mapper.TransactionMapper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -44,19 +42,12 @@ public class TransactionController extends BaseController {
     /**
      * Get all transactions for the current user
      *
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return list of transactions
      */
     @GetMapping
     @Operation(summary = "Get all transactions", description = "Retrieves all transactions for the current user")
-    public ResponseEntity<?> getAllTransactions(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> getAllTransactions(@RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -75,20 +66,13 @@ public class TransactionController extends BaseController {
      * Create a new transaction
      *
      * @param transactionDto transaction information
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return created transaction
      */
     @PostMapping
     @Operation(summary = "Create transaction", description = "Creates a new transaction for the current user")
     public ResponseEntity<?> createTransaction(@Valid @RequestBody TransactionDto transactionDto,
-                                            HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+                                            @RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -111,19 +95,12 @@ public class TransactionController extends BaseController {
      * Get a transaction by ID
      *
      * @param id transaction ID
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return transaction information
      */
     @GetMapping("/{id}")
     @Operation(summary = "Get transaction", description = "Retrieves a transaction by ID")
-    public ResponseEntity<?> getTransaction(@PathVariable Long id, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> getTransaction(@PathVariable Long id, @RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -149,19 +126,12 @@ public class TransactionController extends BaseController {
      * Delete a transaction
      *
      * @param id transaction ID
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return empty response
      */
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete transaction", description = "Deletes a transaction by ID")
-    public ResponseEntity<?> deleteTransaction(@PathVariable Long id, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> deleteTransaction(@PathVariable Long id, @RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

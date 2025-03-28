@@ -11,7 +11,6 @@ import website.ylab.learningplatform.service.AuthService;
 import website.ylab.learningplatform.web.dto.UserDto;
 import website.ylab.learningplatform.web.mapper.UserMapper;
 
-
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -36,12 +35,11 @@ public class AuthController extends BaseController {
      * Login a user
      *
      * @param userDto user credentials
-     * @param request HTTP request
      * @return user information
      */
     @PostMapping("/login")
     @Operation(summary = "Login a user", description = "Authenticate a user with email and password")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody UserDto userDto, @SessionAttribute(name = "userId", required = false) Long sessionUserId) {
         if (userDto.getEmail() == null || userDto.getEmail().isEmpty() ||
                 userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
@@ -50,13 +48,9 @@ public class AuthController extends BaseController {
         try {
             User user = authService.loginUser(userDto.getEmail(), userDto.getPassword());
             if (user != null) {
-                HttpSession session = request.getSession(true);
-                session.setAttribute("userId", user.getId());
-                session.setAttribute("userEmail", user.getEmail());
-
-                UserDto responseDto = userMapper.toDto(user);
-                responseDto.setPassword(null); // Don't send password back
-                return ResponseEntity.ok(responseDto);
+                return ResponseEntity.ok()
+                        .header("X-Auth-Token", user.getId().toString())
+                        .body(userMapper.toDto(user));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("error", "Invalid email or password"));
@@ -71,12 +65,11 @@ public class AuthController extends BaseController {
      * Register a new user
      *
      * @param userDto user information
-     * @param request HTTP request
      * @return created user information
      */
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "Create a new user account")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto, HttpServletRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
         try {
             if (authService.isEmailRegistered(userDto.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -86,11 +79,6 @@ public class AuthController extends BaseController {
             User user = userMapper.toEntity(userDto);
             boolean success = authService.register(user.getName(), user.getEmail(), user.getPassword());
 
-            HttpSession session = request.getSession(true);
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getEmail());
-
-            request.setAttribute("userEmail", user.getEmail());
             if (!success) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(Map.of("error", "Error during registration"));
@@ -98,7 +86,9 @@ public class AuthController extends BaseController {
             
             UserDto responseDto = userMapper.toDto(user);
             responseDto.setPassword(null); // Don't send password back
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .header("X-Auth-Token", user.getId().toString())
+                    .body(responseDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error during registration: " + e.getMessage()));
@@ -108,16 +98,11 @@ public class AuthController extends BaseController {
     /**
      * Logout a user
      *
-     * @param request HTTP request
      * @return empty response
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout a user", description = "Invalidate the user's session")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+    public ResponseEntity<?> logout() {
         return ResponseEntity.noContent().build();
     }
 }

@@ -11,8 +11,6 @@ import website.ylab.learningplatform.service.UserService;
 import website.ylab.learningplatform.web.dto.UserDto;
 import website.ylab.learningplatform.web.mapper.UserMapper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -39,19 +37,12 @@ public class UserController extends BaseController {
     /**
      * Get current user profile
      *
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return user information
      */
     @GetMapping("/profile")
     @Operation(summary = "Get current user profile", description = "Retrieves the profile of the currently logged in user")
-    public ResponseEntity<?> getCurrentUserProfile(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> getCurrentUserProfile(@RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -67,19 +58,13 @@ public class UserController extends BaseController {
      * Update user profile
      *
      * @param userDto updated user information
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return updated user information
      */
     @PutMapping("/profile")
     @Operation(summary = "Update user profile", description = "Updates the profile of the currently logged in user")
-    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UserDto userDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UserDto userDto, 
+                                            @RequestHeader("X-Auth-Token") Long userId) {
         User existingUser = userService.getUserById(userId);
         if (existingUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,19 +90,12 @@ public class UserController extends BaseController {
     /**
      * Get all users (admin only)
      *
-     * @param request HTTP request
+     * @param userId the ID of the authenticated user
      * @return list of users
      */
     @GetMapping
     @Operation(summary = "Get all users", description = "Retrieves all users (admin only)")
-    public ResponseEntity<?> getAllUsers(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-
-        Long userId = (Long) session.getAttribute("userId");
+    public ResponseEntity<?> getAllUsers(@RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null || !user.getIsAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)

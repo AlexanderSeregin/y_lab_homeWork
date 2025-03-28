@@ -167,4 +167,8 @@ public class User {
     public void setPassword(String password) {
         this.passwordHash = password;
     }
+
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
 }

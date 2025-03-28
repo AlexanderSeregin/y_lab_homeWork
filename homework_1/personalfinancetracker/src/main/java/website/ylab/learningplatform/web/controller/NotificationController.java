@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import website.ylab.learningplatform.model.Notification;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.service.NotificationService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import website.ylab.learningplatform.service.UserService;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -19,21 +17,22 @@ import javax.servlet.http.HttpSession;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final UserService userService;
 
     @Autowired
-    public NotificationController(NotificationService notificationService) {
+    public NotificationController(NotificationService notificationService, UserService userService) {
         this.notificationService = notificationService;
+        this.userService = userService;
     }
 
     @GetMapping
     @Operation(summary = "Get user notifications", description = "Retrieves notifications for the authenticated user")
-    public ResponseEntity<?> getUserNotifications(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    public ResponseEntity<?> getUserNotifications(@RequestHeader("X-Auth-Token") Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        User user = (User) session.getAttribute("user");
         Notification notification = notificationService.getNotification(user.getId());
         
         if (notification == null) {
@@ -46,22 +45,23 @@ public class NotificationController {
     @PostMapping
     @Operation(summary = "Create notification", description = "Creates a new notification for a user (admin only)")
     public ResponseEntity<?> createNotification(
-            @RequestParam Long userId,
+            @RequestParam Long targetUserId,
             @RequestParam String message,
-            HttpServletRequest request) {
+            @RequestHeader("X-Auth-Token") Long userId) {
         
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        User currentUser = userService.getUserById(userId);
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-
-        User currentUser = (User) session.getAttribute("user");
+        
         if (!currentUser.isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admins can create notifications");
         }
 
-        User targetUser = new User();
-        targetUser.setId(userId);
+        User targetUser = userService.getUserById(targetUserId);
+        if (targetUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Target user not found");
+        }
         
         notificationService.sendNotification(targetUser, message);
         

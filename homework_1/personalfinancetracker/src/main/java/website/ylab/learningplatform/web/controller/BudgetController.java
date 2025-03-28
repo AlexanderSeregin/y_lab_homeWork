@@ -29,13 +29,12 @@ public class BudgetController {
 
     @GetMapping
     @Operation(summary = "Get user's budget", description = "Retrieves the current budget for the authenticated user")
-    public ResponseEntity<?> getUserBudget(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    public ResponseEntity<?> getUserBudget(@RequestHeader("X-Auth-Token") Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        User user = (User) session.getAttribute("user");
         Budget budget = budgetService.getUserBudget(user.getId());
         
         if (budget == null) {
@@ -47,38 +46,37 @@ public class BudgetController {
 
     @PostMapping
     @Operation(summary = "Set user's budget", description = "Sets or updates the budget for the authenticated user")
-    public ResponseEntity<?> setBudget(@RequestParam BigDecimal amount, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    public ResponseEntity<?> setBudget(@RequestParam BigDecimal amount, @RequestHeader("X-Auth-Token") Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return ResponseEntity.badRequest().body("Budget amount cannot be negative");
         }
 
-        User user = (User) session.getAttribute("user");
         Budget budget = budgetService.setBudget(user.getId(), amount);
         
         return ResponseEntity.ok(budget);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     @Operation(summary = "Update budget", description = "Updates an existing budget with new amount")
-    public ResponseEntity<?> updateBudget(@PathVariable Long id, @RequestParam BigDecimal amount, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    public ResponseEntity<?> updateBudget(@PathVariable Long id, @RequestParam BigDecimal amount, 
+                                       @RequestHeader("X-Auth-Token") Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return ResponseEntity.badRequest().body("Budget amount cannot be negative");
         }
 
-        User user = (User) session.getAttribute("user");
         Budget existingBudget = budgetService.getUserBudget(user.getId());
         
-        if (existingBudget == null || !existingBudget.getId().equals(id)) {
+        if (existingBudget == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authorized to update this budget");
         }
         
