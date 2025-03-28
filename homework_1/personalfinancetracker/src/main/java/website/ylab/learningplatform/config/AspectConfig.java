@@ -2,7 +2,6 @@ package website.ylab.learningplatform.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import website.ylab.learningplatform.aspect.AuditAspect;
 import website.ylab.learningplatform.aspect.LoggingAspect;
 
 /**
@@ -13,11 +12,11 @@ public class AspectConfig {
     private static final Logger logger = LogManager.getLogger(AspectConfig.class.getName());
     private static AspectConfig instance;
     
-    private final AuditAspect auditAspect;
+    //private final AuditAspect auditAspect;
     private final LoggingAspect loggingAspect;
 
     private AspectConfig() {
-        auditAspect = new AuditAspect();
+       // auditAspect = new AuditAspect();
         loggingAspect = new LoggingAspect();
     }
 
@@ -36,9 +35,9 @@ public class AspectConfig {
         logger.info("AuditAspect and LoggingAspect initialized");
     }
     
-    public AuditAspect getAuditAspect() {
-        return auditAspect;
-    }
+   // public AuditAspect getAuditAspect() {
+      //  return auditAspect;
+   // }
     
     public LoggingAspect getLoggingAspect() {
         return loggingAspect;

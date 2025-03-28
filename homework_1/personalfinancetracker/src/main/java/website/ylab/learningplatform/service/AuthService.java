@@ -1,21 +1,20 @@
 package website.ylab.learningplatform.service;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 import website.ylab.learningplatform.util.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
+@Service
 public class AuthService {
-    private UserRepository userRepository = PostgresUserRepository.getInstance();
+    private final UserRepository userRepository;
 
-    public AuthService() {
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
+    @Autowired
+    public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

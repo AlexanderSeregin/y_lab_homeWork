@@ -1,19 +1,25 @@
 package website.ylab.learningplatform.service;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import website.ylab.learningplatform.model.Notification;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.NotificationRepository;
-import website.ylab.learningplatform.repository.impl.PostgresNotificationRepository;
 
+@Service
 public class NotificationService {
-    private static final NotificationRepository notificationRepository = PostgresNotificationRepository.getInstance();
+    private final NotificationRepository notificationRepository;
 
-    public static void sendNotification(User user, String message) {
+    @Autowired
+    public NotificationService(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+
+    public void sendNotification(User user, String message) {
         notificationRepository.save(new Notification(user.getId(), message));
     }
 
-    public static Notification getNotification(User user) {
-        return notificationRepository.findByUserId(user.getId()).orElse(null);
+    public Notification getNotification(Long userId) {
+        return notificationRepository.findByUserId(userId).orElse(null);
     }
 }

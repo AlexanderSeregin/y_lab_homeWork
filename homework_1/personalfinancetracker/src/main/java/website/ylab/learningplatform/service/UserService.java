@@ -1,29 +1,36 @@
 package website.ylab.learningplatform.service;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
+import website.ylab.learningplatform.util.PasswordEncoder;
 
+@Service
 public class UserService {
-    private static final UserRepository userRepository = PostgresUserRepository.getInstance();
+    private final UserRepository userRepository;
 
-    public static void userChangeEmail(User user, String newEmail) {
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void updateEmail(User user, String newEmail) {
         user.setEmail(newEmail);
         userRepository.save(user);
     }
 
-    public static void userChangeName(User user, String newName) {
+    public void updateName(User user, String newName) {
         user.setName(newName);
         userRepository.save(user);
     }
 
-    public static void userChangePassword(User user, String newPassword) {
-        user.setPasswordHash(newPassword);
+    public void updatePassword(User user, String newPassword) {
+        user.setPasswordHash(PasswordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
-    public static void userDelete(User user) {
+    public void deleteUser(User user) {
         userRepository.delete(user);
     }
 
@@ -33,5 +40,9 @@ public class UserService {
 
     public User updateUser(User user) {
         return userRepository.save(user);
+    }
+    
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

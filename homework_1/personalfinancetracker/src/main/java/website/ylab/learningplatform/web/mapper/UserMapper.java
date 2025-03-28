@@ -1,15 +1,16 @@
 package website.ylab.learningplatform.web.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.web.dto.UserDto;
 
-@Mapper
+@Mapper(componentModel = "spring")
+@Component
 public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
     UserDto toDto(User user);
 
+    @Mapping(target = "isBlocked", ignore = true)
     User toEntity(UserDto userDto);
 }

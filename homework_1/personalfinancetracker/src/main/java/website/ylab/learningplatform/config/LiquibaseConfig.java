@@ -1,6 +1,5 @@
 package website.ylab.learningplatform.config;
 
-import com.typesafe.config.Config;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -8,50 +7,47 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 /**
- * Liquibase configuration class for handling database migrations
+ * Configuration class for Liquibase database migrations.
  */
+@Configuration
+@EnableConfigurationProperties(LiquibaseProperties.class)
 public class LiquibaseConfig {
-    private static final LiquibaseConfig INSTANCE = new LiquibaseConfig();
-    private final DatabaseConfig dbConfig;
 
-    private LiquibaseConfig() {
-        this.dbConfig = DatabaseConfig.getInstance();
+    private final DataSource dataSource;
+    private final LiquibaseProperties properties;
+
+    @Autowired
+    public LiquibaseConfig(DataSource dataSource, LiquibaseProperties properties) {
+        this.dataSource = dataSource;
+        this.properties = properties;
     }
 
     /**
-     * Get the singleton instance of LiquibaseConfig
+     * Creates a Liquibase bean that will automatically run migrations on startup
      *
-     * @return liquibase config instance
+     * @return Liquibase instance
+     * @throws Exception if an error occurs during migration
      */
-    public static LiquibaseConfig getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Execute Liquibase migrations
-     */
-    public void migrate() {
-        Config config = dbConfig.getConfig();
-        String changeLogPath = config.getString("liquibase.changeLog");
-        String contexts = config.getString("liquibase.contexts");
-
-        try (Connection connection = dbConfig.getConnection()) {
-            Database database = DatabaseFactory.getInstance()
-                    .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-            Liquibase liquibase = new Liquibase(
-                    changeLogPath,
-                    new ClassLoaderResourceAccessor(),
-                    database
-            );
-
-            liquibase.update((contexts == null || contexts.isEmpty()) ? new Contexts() : new Contexts(contexts), new LabelExpression());
-        } catch (Exception e) {
-            throw new RuntimeException("Liquibase migration failed", e);
-        }
+    @Bean
+    public Liquibase liquibase() throws Exception {
+        Database database = DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
+        
+        Liquibase liquibase = new Liquibase(
+                properties.getChangeLog(),
+                new ClassLoaderResourceAccessor(),
+                database);
+        
+        liquibase.update(new Contexts(properties.getContexts()), new LabelExpression());
+        return liquibase;
     }
 }
