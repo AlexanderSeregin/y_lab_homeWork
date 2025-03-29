@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import website.ylab.learningplatform.config.LiquibaseConfig;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "website.ylab.learningplatform")
@@ -12,10 +11,7 @@ import website.ylab.learningplatform.config.LiquibaseConfig;
 public class Main {
 
     public static void main(String[] args) {
-
-        // Run database migrations
-        LiquibaseConfig.getInstance().migrate();
-
+        // Spring Boot will automatically run LiquibaseConfig.migrate() via @PostConstruct
         SpringApplication.run(Main.class, args);
         System.out.println("Personal Finance Tracker application started");
     }
