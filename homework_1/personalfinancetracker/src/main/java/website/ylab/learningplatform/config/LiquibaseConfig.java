@@ -43,14 +43,14 @@ public class LiquibaseConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         migrate();
     }
-    
+
     /**
      * Execute Liquibase migrations
      */
     private void migrate() {
         try (Connection connection = dbConfig.getConnection();
              ClassLoaderResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()) {
-            
+
             Database database = DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
@@ -58,7 +58,7 @@ public class LiquibaseConfig implements InitializingBean {
                     changeLogPath,
                     resourceAccessor,
                     database)) {
-                    
+
                 liquibase.update((contexts == null || contexts.isEmpty()) ? new Contexts() : new Contexts(contexts), new LabelExpression());
             }
         } catch (Exception e) {
