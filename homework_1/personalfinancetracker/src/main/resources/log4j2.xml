@@ -13,7 +13,7 @@
 
         <!-- Socket Appender to send logs to Logstash -->
         <Socket name="LogstashAppender" host="logstash" port="50000" protocol="TCP" reconnectionDelayMillis="5000">
-            <JsonLayout complete="false" compact="true" eventEol="true" properties="true" />
+            <JsonLayout complete="false" compact="true" eventEol="true" properties="true"/>
         </Socket>
     </Appenders>
 

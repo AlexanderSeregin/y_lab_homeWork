@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import website.ylab.learningplatform.model.Budget;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.BudgetRepository;
-import website.ylab.learningplatform.service.NotificationService;
-import website.ylab.learningplatform.service.TransactionService;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -15,19 +13,15 @@ import java.util.Optional;
 public class BudgetService {
     private final BudgetRepository budgetRepository;
     private final NotificationService notificationService;
-    private final TransactionService transactionService;
 
     @Autowired
-    public BudgetService(BudgetRepository budgetRepository, 
-                        NotificationService notificationService,
-                        TransactionService transactionService) {
+    public BudgetService(BudgetRepository budgetRepository,
+                         NotificationService notificationService) {
         this.budgetRepository = budgetRepository;
         this.notificationService = notificationService;
-        this.transactionService = transactionService;
     }
 
-    public void checkBudget(User user) {
-        BigDecimal sum = transactionService.getSumOfUserSpendingsInCurrentMonth(user.getId());
+    public void checkBudget(User user, BigDecimal sum) {
         Optional<Budget> budgetOptional = budgetRepository.findByUserId(user.getId());
         if (budgetOptional.isEmpty()) {
             return;

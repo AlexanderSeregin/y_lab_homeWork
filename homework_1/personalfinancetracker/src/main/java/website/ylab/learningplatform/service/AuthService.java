@@ -32,8 +32,12 @@ public class AuthService {
         return user.isPresent() && user.get().getPasswordHash().equals(passwordHash) && !user.get().getIsBlocked();
     }
 
-    public User loginUser(String email, String passwordHash) {
+    public User loginUser(String email, String password) {
+        String passwordHash = PasswordEncoder.encode(password);
         Optional<User> user = userRepository.findByEmail(email);
+        if (!user.isPresent() || !user.get().getPasswordHash().equals(passwordHash) || user.get().getIsBlocked()) {
+            return null;
+        }
         return user.get();
     }
 

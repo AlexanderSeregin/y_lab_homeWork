@@ -34,11 +34,11 @@ public class NotificationController {
         }
 
         Notification notification = notificationService.getNotification(user.getId());
-        
+
         if (notification == null) {
             return ResponseEntity.ok().body("No notifications");
         }
-        
+
         return ResponseEntity.ok(notification);
     }
 
@@ -48,12 +48,12 @@ public class NotificationController {
             @RequestParam Long targetUserId,
             @RequestParam String message,
             @RequestHeader("X-Auth-Token") Long userId) {
-        
+
         User currentUser = userService.getUserById(userId);
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        
+
         if (!currentUser.isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admins can create notifications");
         }
@@ -62,9 +62,9 @@ public class NotificationController {
         if (targetUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Target user not found");
         }
-        
+
         notificationService.sendNotification(targetUser, message);
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Notification sent");
     }
 }

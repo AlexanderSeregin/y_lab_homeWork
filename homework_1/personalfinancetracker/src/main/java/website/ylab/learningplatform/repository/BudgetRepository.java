@@ -7,6 +7,7 @@ import java.util.Optional;
 /**
  * Repository interface for Budget entity
  */
+@org.springframework.stereotype.Repository
 public interface BudgetRepository extends Repository<Budget, Long> {
     /**
      * Find budget by user ID

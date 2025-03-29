@@ -2,16 +2,19 @@ package website.ylab.learningplatform.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.service.AuthService;
 import website.ylab.learningplatform.web.dto.UserDto;
 import website.ylab.learningplatform.web.mapper.UserMapper;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -39,12 +42,12 @@ public class AuthController extends BaseController {
      */
     @PostMapping("/login")
     @Operation(summary = "Login a user", description = "Authenticate a user with email and password")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto, @SessionAttribute(name = "userId", required = false) Long sessionUserId) {
+    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
         if (userDto.getEmail() == null || userDto.getEmail().isEmpty() ||
                 userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
         }
-        
+
         try {
             User user = authService.loginUser(userDto.getEmail(), userDto.getPassword());
             if (user != null) {
@@ -83,9 +86,9 @@ public class AuthController extends BaseController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(Map.of("error", "Error during registration"));
             }
-            
+
             UserDto responseDto = userMapper.toDto(user);
-            responseDto.setPassword(null); // Don't send password back
+            responseDto.setPassword(null);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .header("X-Auth-Token", user.getId().toString())
                     .body(responseDto);
@@ -93,16 +96,5 @@ public class AuthController extends BaseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error during registration: " + e.getMessage()));
         }
-    }
-
-    /**
-     * Logout a user
-     *
-     * @return empty response
-     */
-    @PostMapping("/logout")
-    @Operation(summary = "Logout a user", description = "Invalidate the user's session")
-    public ResponseEntity<?> logout() {
-        return ResponseEntity.noContent().build();
     }
 }

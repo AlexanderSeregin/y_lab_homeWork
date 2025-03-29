@@ -1,5 +1,8 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import website.ylab.learningplatform.config.DatabaseConfig;
 import website.ylab.learningplatform.model.Notification;
 import website.ylab.learningplatform.repository.NotificationRepository;
 
@@ -11,9 +14,8 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of NotificationRepository
  */
+@Repository
 public class PostgresNotificationRepository extends PostgresRepository<Notification, Long> implements NotificationRepository {
-    private static final PostgresNotificationRepository INSTANCE = new PostgresNotificationRepository();
-
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.notifications WHERE id = ? LIMIT 1";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.notifications";
     private static final String SELECT_BY_USER_ID = "SELECT * FROM finance_schema.notifications WHERE user_id = ?";
@@ -21,19 +23,17 @@ public class PostgresNotificationRepository extends PostgresRepository<Notificat
     private static final String UPDATE = "UPDATE finance_schema.notifications SET user_id = ?, name = ?, target_amount = ?, current_amount = ?, target_date = ?, description = ?, is_completed = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.notifications WHERE id = ?";
 
-
-    private PostgresNotificationRepository() {
+    @Autowired
+    public PostgresNotificationRepository(DatabaseConfig dbConfig) {
+        super(dbConfig);
     }
+
 
     /**
      * Get singleton instance
      *
      * @return repository instance
      */
-    public static PostgresNotificationRepository getInstance() {
-        return INSTANCE;
-    }
-
     @Override
     public Optional<Notification> findById(Long id) {
         return querySingle(SELECT_BY_ID, this::mapResultSetToNotification, id);

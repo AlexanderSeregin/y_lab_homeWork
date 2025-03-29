@@ -1,5 +1,7 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import website.ylab.learningplatform.config.DatabaseConfig;
 import website.ylab.learningplatform.model.Budget;
 import website.ylab.learningplatform.repository.BudgetRepository;
@@ -13,13 +15,13 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of BudgetRepository
  */
+@Repository
 public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> implements BudgetRepository {
-    private static final PostgresBudgetRepository INSTANCE = new PostgresBudgetRepository();
     private final DatabaseConfig databaseConfig;
 
-
-    private PostgresBudgetRepository() {
-        this.databaseConfig = DatabaseConfig.getInstance();
+    @Autowired
+    public PostgresBudgetRepository(DatabaseConfig databaseConfig) {
+        this.databaseConfig = databaseConfig;
     }
 
     /**
@@ -27,10 +29,6 @@ public class PostgresBudgetRepository extends PostgresRepository<Budget, Long> i
      *
      * @return repository instance
      */
-    public static PostgresBudgetRepository getInstance() {
-        return INSTANCE;
-    }
-
     @Override
     public Optional<Budget> findById(Long id) {
         return findByUserId(id);

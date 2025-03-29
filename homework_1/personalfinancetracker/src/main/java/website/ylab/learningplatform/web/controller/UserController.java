@@ -2,6 +2,7 @@ package website.ylab.learningplatform.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,6 @@ import website.ylab.learningplatform.service.UserService;
 import website.ylab.learningplatform.web.dto.UserDto;
 import website.ylab.learningplatform.web.mapper.UserMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,7 +50,7 @@ public class UserController extends BaseController {
         }
 
         UserDto userDto = userMapper.toDto(user);
-        userDto.setPassword(null); // Don't send password back
+        userDto.setPassword(null);
         return ResponseEntity.ok(userDto);
     }
 
@@ -58,32 +58,31 @@ public class UserController extends BaseController {
      * Update user profile
      *
      * @param userDto updated user information
-     * @param userId the ID of the authenticated user
+     * @param userId  the ID of the authenticated user
      * @return updated user information
      */
     @PutMapping("/profile")
     @Operation(summary = "Update user profile", description = "Updates the profile of the currently logged in user")
-    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UserDto userDto, 
-                                            @RequestHeader("X-Auth-Token") Long userId) {
+    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UserDto userDto,
+                                               @RequestHeader("X-Auth-Token") Long userId) {
         User existingUser = userService.getUserById(userId);
         if (existingUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "User not found"));
         }
 
-        // Only update allowed fields
         if (userDto.getEmail() != null && !userDto.getEmail().isEmpty()) {
             existingUser.setEmail(userDto.getEmail());
         }
-        
+
         if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
             userService.updatePassword(existingUser, userDto.getPassword());
         }
 
         userService.updateUser(existingUser);
-        
+
         UserDto responseDto = userMapper.toDto(existingUser);
-        responseDto.setPassword(null); // Don't send password back
+        responseDto.setPassword(null);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -105,7 +104,7 @@ public class UserController extends BaseController {
         List<UserDto> users = StreamSupport.stream(userService.getAllUsers().spliterator(), false)
                 .map(u -> {
                     UserDto dto = userMapper.toDto(u);
-                    dto.setPassword(null); // Don't send password back
+                    dto.setPassword(null);
                     return dto;
                 })
                 .collect(Collectors.toList());

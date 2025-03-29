@@ -1,5 +1,6 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.stereotype.Repository;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.repository.TransactionRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of TransactionRepository
  */
+@Repository
 public class PostgresTransactionRepository extends PostgresRepository<Transaction, Long> implements TransactionRepository {
     private static final PostgresTransactionRepository INSTANCE = new PostgresTransactionRepository();
 

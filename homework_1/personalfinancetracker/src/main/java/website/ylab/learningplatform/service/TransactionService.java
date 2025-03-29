@@ -7,7 +7,6 @@ import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.TransactionRepository;
 import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.service.BudgetService;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -20,38 +19,39 @@ public class TransactionService {
     private final BudgetService budgetService;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, 
-                             UserRepository userRepository,
-                             BudgetService budgetService) {
+    public TransactionService(TransactionRepository transactionRepository,
+                              UserRepository userRepository,
+                              BudgetService budgetService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.budgetService = budgetService;
     }
 
     public Transaction createTransaction(Transaction transaction) {
-        User user = userRepository.findById(transaction.getUserId()).orElseThrow(() -> 
-            new IllegalArgumentException("User not found"));
-            
+        User user = userRepository.findById(transaction.getUserId()).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
         if (BigDecimal.ZERO.compareTo(transaction.getAmount()) > 0) {
             throw new IllegalArgumentException("Amount cannot be negative");
         }
-        
+
         BigDecimal amount = transaction.getAmount();
         if (!transaction.isIncome() && checkBalance(user, amount)) {
             throw new IllegalArgumentException("Not enough money");
         }
-        
+
         if (!transaction.isIncome()) {
             amount = amount.negate();
             transaction.setAmount(amount);
         }
-        
+
         user.setBalance(user.getBalance().add(amount));
         userRepository.save(user);
-        
+
         Transaction savedTransaction = transactionRepository.save(transaction);
-        budgetService.checkBudget(user);
-        
+        BigDecimal sum = getSumOfUserSpendingsInCurrentMonth(user.getId());
+        budgetService.checkBudget(user, sum);
+
         return savedTransaction;
     }
 
@@ -60,9 +60,9 @@ public class TransactionService {
     }
 
     public BigDecimal getSumOfUserTransactionsForCurrentMonth(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> 
-            new IllegalArgumentException("User not found"));
-            
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -93,37 +93,37 @@ public class TransactionService {
 
     public Transaction updateTransactionDescription(Long transactionId, String newDescription) {
         Transaction transaction = transactionRepository.findById(transactionId)
-            .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
         transaction.setDescription(newDescription);
         return transactionRepository.save(transaction);
     }
 
     public Transaction updateTransactionAmount(Long userId, Long transactionId, BigDecimal newAmount) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Transaction transaction = transactionRepository.findById(transactionId)
-            .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
-            
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+
         BigDecimal oldAmount = transaction.getAmount();
         transaction.setAmount(newAmount);
         Transaction updatedTransaction = transactionRepository.save(transaction);
-        
+
         user.setBalance(user.getBalance().subtract(oldAmount).add(newAmount));
         userRepository.save(user);
-        
+
         return updatedTransaction;
     }
 
     public Transaction updateTransactionCategory(Long transactionId, Category newCategory) {
         Transaction transaction = transactionRepository.findById(transactionId)
-            .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
         transaction.setCategory(newCategory);
         return transactionRepository.save(transaction);
     }
 
     public void deleteTransaction(Transaction transaction) {
         User user = userRepository.findById(transaction.getUserId())
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         BigDecimal amount = transaction.getAmount();
         transactionRepository.delete(transaction);
         user.setBalance(user.getBalance().subtract(amount));
@@ -132,8 +132,8 @@ public class TransactionService {
 
     public BigDecimal getSumOfUserSpendingsInCurrentMonth(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -157,8 +157,8 @@ public class TransactionService {
 
     public Map<Category, BigDecimal> getSumOfUserSpendingsByCategoryForCurrentMonth(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);

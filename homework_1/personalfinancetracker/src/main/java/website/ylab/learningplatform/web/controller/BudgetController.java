@@ -36,11 +36,11 @@ public class BudgetController {
         }
 
         Budget budget = budgetService.getUserBudget(user.getId());
-        
+
         if (budget == null) {
             return ResponseEntity.ok(BigDecimal.ZERO);
         }
-        
+
         return ResponseEntity.ok(budget);
     }
 
@@ -57,14 +57,14 @@ public class BudgetController {
         }
 
         Budget budget = budgetService.setBudget(user.getId(), amount);
-        
+
         return ResponseEntity.ok(budget);
     }
 
     @PutMapping
     @Operation(summary = "Update budget", description = "Updates an existing budget with new amount")
-    public ResponseEntity<?> updateBudget(@PathVariable Long id, @RequestParam BigDecimal amount, 
-                                       @RequestHeader("X-Auth-Token") Long userId) {
+    public ResponseEntity<?> updateBudget(@PathVariable Long id, @RequestParam BigDecimal amount,
+                                          @RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -75,14 +75,14 @@ public class BudgetController {
         }
 
         Budget existingBudget = budgetService.getUserBudget(user.getId());
-        
+
         if (existingBudget == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authorized to update this budget");
         }
-        
+
         existingBudget.setAmount(amount);
         Budget updatedBudget = budgetService.updateBudget(existingBudget);
-        
+
         return ResponseEntity.ok(updatedBudget);
     }
 }

@@ -2,6 +2,7 @@ package website.ylab.learningplatform.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import website.ylab.learningplatform.service.UserService;
 import website.ylab.learningplatform.web.dto.TransactionDto;
 import website.ylab.learningplatform.web.mapper.TransactionMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,9 +31,9 @@ public class TransactionController extends BaseController {
     private final TransactionMapper transactionMapper;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, 
-                                UserService userService,
-                                TransactionMapper transactionMapper) {
+    public TransactionController(TransactionService transactionService,
+                                 UserService userService,
+                                 TransactionMapper transactionMapper) {
         this.transactionService = transactionService;
         this.userService = userService;
         this.transactionMapper = transactionMapper;
@@ -66,13 +66,13 @@ public class TransactionController extends BaseController {
      * Create a new transaction
      *
      * @param transactionDto transaction information
-     * @param userId the ID of the authenticated user
+     * @param userId         the ID of the authenticated user
      * @return created transaction
      */
     @PostMapping
     @Operation(summary = "Create transaction", description = "Creates a new transaction for the current user")
     public ResponseEntity<?> createTransaction(@Valid @RequestBody TransactionDto transactionDto,
-                                            @RequestHeader("X-Auth-Token") Long userId) {
+                                               @RequestHeader("X-Auth-Token") Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -82,7 +82,7 @@ public class TransactionController extends BaseController {
         try {
             Transaction transaction = transactionMapper.toEntity(transactionDto);
             transaction.setUserId(userId);
-            
+
             Transaction savedTransaction = transactionService.createTransaction(transaction);
             return ResponseEntity.status(HttpStatus.CREATED).body(transactionMapper.toDto(savedTransaction));
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class TransactionController extends BaseController {
     /**
      * Get a transaction by ID
      *
-     * @param id transaction ID
+     * @param id     transaction ID
      * @param userId the ID of the authenticated user
      * @return transaction information
      */
@@ -113,7 +113,6 @@ public class TransactionController extends BaseController {
                     .body(Map.of("error", "Transaction not found"));
         }
 
-        // Security check - users can only view their own transactions
         if (!transaction.getUserId().equals(userId) && !user.getIsAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied"));
@@ -125,7 +124,7 @@ public class TransactionController extends BaseController {
     /**
      * Delete a transaction
      *
-     * @param id transaction ID
+     * @param id     transaction ID
      * @param userId the ID of the authenticated user
      * @return empty response
      */
@@ -144,7 +143,6 @@ public class TransactionController extends BaseController {
                     .body(Map.of("error", "Transaction not found"));
         }
 
-        // Security check - users can only delete their own transactions
         if (!transaction.getUserId().equals(userId) && !user.getIsAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied"));

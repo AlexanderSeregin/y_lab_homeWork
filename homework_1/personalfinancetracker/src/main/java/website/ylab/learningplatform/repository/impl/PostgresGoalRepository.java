@@ -1,5 +1,8 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import website.ylab.learningplatform.config.DatabaseConfig;
 import website.ylab.learningplatform.model.Goal;
 import website.ylab.learningplatform.repository.GoalRepository;
 
@@ -11,8 +14,8 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of GoalRepository
  */
+@Repository
 public class PostgresGoalRepository extends PostgresRepository<Goal, Long> implements GoalRepository {
-    private static final PostgresGoalRepository INSTANCE = new PostgresGoalRepository();
 
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.goals WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.goals";
@@ -21,7 +24,9 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
     private static final String UPDATE = "UPDATE finance_schema.goals SET target_amount = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.goals WHERE id = ?";
 
-    private PostgresGoalRepository() {
+    @Autowired
+    public PostgresGoalRepository(DatabaseConfig dbConfig) {
+        super(dbConfig);
     }
 
     /**
@@ -29,9 +34,6 @@ public class PostgresGoalRepository extends PostgresRepository<Goal, Long> imple
      *
      * @return repository instance
      */
-    public static PostgresGoalRepository getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public Optional<Goal> findById(Long id) {

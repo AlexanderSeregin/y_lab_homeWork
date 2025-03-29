@@ -15,13 +15,13 @@ java {
 }
 
 application {
-    mainClass.set("website.ylab.learningplatform.PersonalFinanceTrackerApplication")
+    mainClass.set("website.ylab.learningplatform.Main")
 }
 
 tasks.jar {
     manifest {
         attributes(
-            "Main-Class" to "website.ylab.learningplatform.PersonalFinanceTrackerApplication"
+            "Main-Class" to "website.ylab.learningplatform.Main"
         )
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
@@ -36,10 +36,9 @@ repositories {
 
 dependencies {
     // Spring Boot dependencies
-    implementation("org.springframework:spring-web:6.2.5")
-    //implementation("org.springframework:spring-data-jdbc:6.2.5")
-    //implementation("org.springframework:spring-validation:6.2.5")
-    implementation("org.springframework:spring-aop:6.2.5")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     
     // Swagger dependencies
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
