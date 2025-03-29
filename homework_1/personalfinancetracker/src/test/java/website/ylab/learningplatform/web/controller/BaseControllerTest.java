@@ -32,7 +32,7 @@ public class BaseControllerTest {
         ConstraintViolation<?> violation = mock(ConstraintViolation.class);
         when(violation.getMessage()).thenReturn("Field must not be empty");
         violations.add(violation);
-        
+
         ConstraintViolationException ex = mock(ConstraintViolationException.class);
         when(ex.getConstraintViolations()).thenReturn(violations);
 
@@ -49,15 +49,15 @@ public class BaseControllerTest {
     void handleValidationExceptions_MultipleViolations_ReturnsJoinedErrorMessages() {
         // Arrange
         Set<ConstraintViolation<?>> violations = new HashSet<>();
-        
+
         ConstraintViolation<?> violation1 = mock(ConstraintViolation.class);
         when(violation1.getMessage()).thenReturn("Field must not be empty");
         violations.add(violation1);
-        
+
         ConstraintViolation<?> violation2 = mock(ConstraintViolation.class);
         when(violation2.getMessage()).thenReturn("Value must be positive");
         violations.add(violation2);
-        
+
         ConstraintViolationException ex = mock(ConstraintViolationException.class);
         when(ex.getConstraintViolations()).thenReturn(violations);
 

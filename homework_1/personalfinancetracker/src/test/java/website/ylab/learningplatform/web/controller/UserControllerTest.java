@@ -70,7 +70,7 @@ public class UserControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof UserDto);
+        assertInstanceOf(UserDto.class, response.getBody());
         UserDto returnedDto = (UserDto) response.getBody();
         assertEquals(testUser.getId(), returnedDto.getId());
         assertEquals(testUser.getEmail(), returnedDto.getEmail());
@@ -87,7 +87,7 @@ public class UserControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertEquals("User not found", errorMap.get("error"));
     }
@@ -144,7 +144,7 @@ public class UserControllerTest {
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof List);
+        assertInstanceOf(List.class, response.getBody());
         List<?> returnedUsers = (List<?>) response.getBody();
         assertEquals(2, returnedUsers.size());
     }

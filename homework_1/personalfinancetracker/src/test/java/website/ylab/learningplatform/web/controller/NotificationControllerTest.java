@@ -17,9 +17,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +81,7 @@ public class NotificationControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof Notification);
+        assertInstanceOf(Notification.class, response.getBody());
         Notification returnedNotification = (Notification) response.getBody();
         assertEquals(testNotification.getId(), returnedNotification.getId());
         assertEquals(testNotification.getMessage(), returnedNotification.getMessage());

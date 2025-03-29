@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +67,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("1", response.getHeaders().getFirst("X-Auth-Token"));
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof UserDto);
+        assertInstanceOf(UserDto.class, response.getBody());
     }
 
     @Test
@@ -81,7 +80,7 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertEquals("Invalid email or password", errorMap.get("error"));
     }
@@ -124,7 +123,7 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertTrue(errorMap.get("error").contains("Error during login"));
     }
@@ -144,7 +143,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals("1", response.getHeaders().getFirst("X-Auth-Token"));
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof UserDto);
+        assertInstanceOf(UserDto.class, response.getBody());
         UserDto returnedDto = (UserDto) response.getBody();
         assertNull(returnedDto.getPassword()); // Password should be cleared in response
     }
@@ -159,7 +158,7 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertEquals("Email already registered", errorMap.get("error"));
         verify(authService, never()).register(anyString(), anyString(), anyString());
@@ -177,7 +176,7 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertEquals("Error during registration", errorMap.get("error"));
     }
@@ -194,7 +193,7 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertTrue(errorMap.get("error").contains("Error during registration"));
     }

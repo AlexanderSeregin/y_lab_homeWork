@@ -63,7 +63,7 @@ public class BudgetControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof Budget);
+        assertInstanceOf(Budget.class, response.getBody());
         Budget returnedBudget = (Budget) response.getBody();
         assertEquals(testBudget.getId(), returnedBudget.getId());
         assertEquals(testBudget.getAmount(), returnedBudget.getAmount());
@@ -81,7 +81,7 @@ public class BudgetControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof BigDecimal);
+        assertInstanceOf(BigDecimal.class, response.getBody());
         assertEquals(BigDecimal.ZERO, response.getBody());
     }
 
@@ -112,7 +112,7 @@ public class BudgetControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof Budget);
+        assertInstanceOf(Budget.class, response.getBody());
         verify(budgetService).setBudget(1L, amount);
     }
 
@@ -153,7 +153,7 @@ public class BudgetControllerTest {
         BigDecimal newAmount = new BigDecimal("800.00");
         when(userService.getUserById(1L)).thenReturn(testUser);
         when(budgetService.getUserBudget(1L)).thenReturn(testBudget);
-        
+
         Budget updatedBudget = new Budget();
         updatedBudget.setId(1L);
         updatedBudget.setUserId(1L);
@@ -166,7 +166,7 @@ public class BudgetControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof Budget);
+        assertInstanceOf(Budget.class, response.getBody());
         Budget returnedBudget = (Budget) response.getBody();
         assertEquals(newAmount, returnedBudget.getAmount());
         verify(budgetService).updateBudget(any(Budget.class));

@@ -17,10 +17,7 @@ import website.ylab.learningplatform.web.dto.TransactionDto;
 import website.ylab.learningplatform.web.mapper.TransactionMapper;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +48,7 @@ public class TransactionControllerTest {
     void setUp() {
         // Setup test date
         testDate = new Date();
-        
+
         // Setup test user
         testUser = new User();
         testUser.setId(1L);
@@ -78,14 +75,14 @@ public class TransactionControllerTest {
 
         // Setup transaction DTO
         testTransactionDto = new TransactionDto(
-                1L, 1L, true, "Test Transaction", 
+                1L, 1L, true, "Test Transaction",
                 new BigDecimal("100.00"), Category.INCOME, testDate);
     }
 
     @Test
     void getAllTransactions_UserExists_ReturnsTransactions() {
         // Arrange
-        List<Transaction> transactions = Arrays.asList(testTransaction);
+        List<Transaction> transactions = Collections.singletonList(testTransaction);
         when(userService.getUserById(1L)).thenReturn(testUser);
         when(transactionService.getUserTransactions(1L)).thenReturn(transactions);
         when(transactionMapper.toDto(testTransaction)).thenReturn(testTransactionDto);
@@ -95,7 +92,7 @@ public class TransactionControllerTest {
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof List);
+        assertInstanceOf(List.class, response.getBody());
         List<?> returnedTransactions = (List<?>) response.getBody();
         assertEquals(1, returnedTransactions.size());
         assertEquals(testTransactionDto, returnedTransactions.get(0));
@@ -156,7 +153,7 @@ public class TransactionControllerTest {
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertInstanceOf(Map.class, response.getBody());
         Map<String, String> errorMap = (Map<String, String>) response.getBody();
         assertTrue(errorMap.get("error").contains("Error creating transaction"));
     }
@@ -198,7 +195,7 @@ public class TransactionControllerTest {
         User otherUser = new User();
         otherUser.setId(3L);
         otherUser.setAdmin(false);
-        
+
         testTransaction.setUserId(1L); // Transaction belongs to user 1
         when(userService.getUserById(3L)).thenReturn(otherUser); // User 3 is requesting
         when(transactionService.getTransactionById(1L)).thenReturn(testTransaction);
@@ -273,7 +270,7 @@ public class TransactionControllerTest {
         User otherUser = new User();
         otherUser.setId(3L);
         otherUser.setAdmin(false);
-        
+
         testTransaction.setUserId(1L); // Transaction belongs to user 1
         when(userService.getUserById(3L)).thenReturn(otherUser); // User 3 is requesting
         when(transactionService.getTransactionById(1L)).thenReturn(testTransaction);
