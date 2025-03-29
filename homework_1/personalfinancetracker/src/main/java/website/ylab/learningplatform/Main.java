@@ -11,7 +11,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class Main {
 
     public static void main(String[] args) {
-        // Spring Boot will automatically run LiquibaseConfig.migrate() via @PostConstruct
         SpringApplication.run(Main.class, args);
         System.out.println("Personal Finance Tracker application started");
     }
