@@ -7,6 +7,7 @@ import java.util.Optional;
 /**
  * Repository interface for User entity
  */
+@org.springframework.stereotype.Repository
 public interface UserRepository extends Repository<User, Long> {
     /**
      * Find user by username

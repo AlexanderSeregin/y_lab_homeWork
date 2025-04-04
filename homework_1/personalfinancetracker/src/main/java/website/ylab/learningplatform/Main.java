@@ -1,45 +1,17 @@
 package website.ylab.learningplatform;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import website.ylab.learningplatform.config.AspectConfig;
-import website.ylab.learningplatform.config.LiquibaseConfig;
-import website.ylab.learningplatform.web.servlet.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-
-
+@SpringBootApplication
+@ComponentScan(basePackages = "website.ylab.learningplatform")
+@EnableAspectJAutoProxy
 public class Main {
+
     public static void main(String[] args) {
-
-        // Initialize aspects
-        AspectConfig.getInstance().initializeAspects();
-
-        // Run database migrations
-        LiquibaseConfig.getInstance().migrate();
-
-        // Create and configure the server
-        Server server = new Server(8080);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        server.setHandler(context);
-
-        // Register servlets
-        context.addServlet(new ServletHolder(new AuthServlet()), "/api/auth/*");
-        context.addServlet(new ServletHolder(new UserServlet()), "/api/users/*");
-        context.addServlet(new ServletHolder(new TransactionServlet()), "/api/transactions/*");
-        context.addServlet(new ServletHolder(new BudgetServlet()), "/api/budgets/*");
-        context.addServlet(new ServletHolder(new GoalServlet()), "/api/goals/*");
-        context.addServlet(new ServletHolder(new NotificationServlet()), "/api/notifications/*");
-
-        try {
-            // Start the server
-            server.start();
-            System.out.println("Server started on port 8080");
-            server.join();
-        } catch (Exception e) {
-            System.err.println("Error starting server: " + e.getMessage());
-            e.printStackTrace();
-        }
+        SpringApplication.run(Main.class, args);
+        System.out.println("Personal Finance Tracker application started");
     }
 }

@@ -1,42 +1,68 @@
 package website.ylab.learningplatform.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.TransactionRepository;
 import website.ylab.learningplatform.repository.UserRepository;
-import website.ylab.learningplatform.repository.impl.PostgresTransactionRepository;
-import website.ylab.learningplatform.repository.impl.PostgresUserRepository;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class TransactionService {
-    private static TransactionRepository transactionRepository = PostgresTransactionRepository.getInstance();
-    private static UserRepository userRepository = PostgresUserRepository.getInstance();
+    private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final BudgetService budgetService;
 
-    public static void newTransaction(User user, boolean isIncome, BigDecimal amount, Category category, Date date, String description) {
-        if (BigDecimal.ZERO.compareTo(amount) > 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
-        }
-        if (!isIncome && checkBalance(user, amount)) {
-            throw new IllegalArgumentException("Not enough money");
-        }
-        if (!isIncome) {
-            amount = amount.negate();
-        }
-        user.setBalance(user.getBalance().add(amount));
-        userRepository.save(user);
-        transactionRepository.save(new Transaction(user.getId(), isIncome, description, amount, category, date));
-        BudgetService.checkBudget(user);
+    @Autowired
+    public TransactionService(TransactionRepository transactionRepository,
+                              UserRepository userRepository,
+                              BudgetService budgetService) {
+        this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.budgetService = budgetService;
     }
 
-    private static boolean checkBalance(User user, BigDecimal amount) {
+    public Transaction createTransaction(Transaction transaction) {
+        User user = userRepository.findById(transaction.getUserId()).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
+        if (BigDecimal.ZERO.compareTo(transaction.getAmount()) > 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+
+        BigDecimal amount = transaction.getAmount();
+        if (!transaction.isIncome() && checkBalance(user, amount)) {
+            throw new IllegalArgumentException("Not enough money");
+        }
+
+        if (!transaction.isIncome()) {
+            amount = amount.negate();
+            transaction.setAmount(amount);
+        }
+
+        user.setBalance(user.getBalance().add(amount));
+        userRepository.save(user);
+
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        BigDecimal sum = getSumOfUserSpendingsInCurrentMonth(user.getId());
+        budgetService.checkBudget(user, sum);
+
+        return savedTransaction;
+    }
+
+    private boolean checkBalance(User user, BigDecimal amount) {
         return user.getBalance().compareTo(amount) < 0;
     }
 
-    public static BigDecimal getSumOfUserTransactionsForCurrentMonth(User user) {
+    public BigDecimal getSumOfUserTransactionsForCurrentMonth(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -57,36 +83,57 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static Iterable<Transaction> getUserTransactions(User user) {
-        return transactionRepository.findByUserId(user.getId()).orElse(null);
+    public List<Transaction> getUserTransactions(Long userId) {
+        return transactionRepository.findByUserId(userId).orElse(new ArrayList<>());
     }
 
-    public static Transaction getTransactionById(long transactionId) {
+    public Transaction getTransactionById(Long transactionId) {
         return transactionRepository.findById(transactionId).orElse(null);
     }
 
-    public static void changeDescription(User user, long transactionId, String newDescription) {
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), newDescription, transactionRepository.findById(transactionId).get().getAmount(), transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
+    public Transaction updateTransactionDescription(Long transactionId, String newDescription) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+        transaction.setDescription(newDescription);
+        return transactionRepository.save(transaction);
     }
 
-    public static void changeAmount(User user, long transactionId, BigDecimal newAmount) {
-        BigDecimal oldAmount = transactionRepository.findById(transactionId).get().getAmount();
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), newAmount, transactionRepository.findById(transactionId).get().getCategory(), transactionRepository.findById(transactionId).get().getDate()));
-        user.setBalance(user.getBalance().subtract(newAmount.subtract(oldAmount)));
+    public Transaction updateTransactionAmount(Long userId, Long transactionId, BigDecimal newAmount) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+
+        BigDecimal oldAmount = transaction.getAmount();
+        transaction.setAmount(newAmount);
+        Transaction updatedTransaction = transactionRepository.save(transaction);
+
+        user.setBalance(user.getBalance().subtract(oldAmount).add(newAmount));
+        userRepository.save(user);
+
+        return updatedTransaction;
+    }
+
+    public Transaction updateTransactionCategory(Long transactionId, Category newCategory) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+        transaction.setCategory(newCategory);
+        return transactionRepository.save(transaction);
+    }
+
+    public void deleteTransaction(Transaction transaction) {
+        User user = userRepository.findById(transaction.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        BigDecimal amount = transaction.getAmount();
+        transactionRepository.delete(transaction);
+        user.setBalance(user.getBalance().subtract(amount));
         userRepository.save(user);
     }
 
-    public static void changeCategory(User user, long transactionId, Category newCategory) {
-        transactionRepository.save(new Transaction(transactionId, transactionRepository.findById(transactionId).get().isIncome(), transactionRepository.findById(transactionId).get().getDescription(), transactionRepository.findById(transactionId).get().getAmount(), newCategory, transactionRepository.findById(transactionId).get().getDate()));
-    }
+    public BigDecimal getSumOfUserSpendingsInCurrentMonth(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    public static void deleteTransaction(User user, long transactionToDeleteId) {
-        BigDecimal amount = transactionRepository.findById(transactionToDeleteId).get().getAmount();
-        transactionRepository.deleteById(transactionToDeleteId);
-        user.setBalance(user.getBalance().add(amount));
-    }
-
-    public static BigDecimal getSumOfUserSpendingsInCurrentMonth(User user) {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -108,7 +155,10 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static Map<Category, BigDecimal> getSumOfUserSpendingsByCategoryForCurrentMonth(User user) {
+    public Map<Category, BigDecimal> getSumOfUserSpendingsByCategoryForCurrentMonth(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -132,8 +182,8 @@ public class TransactionService {
                 ));
     }
 
-    public static BigDecimal getSumOfUserSpendingsForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
+    public BigDecimal getSumOfUserSpendingsForPeriod(Long userId, Date from, Date to) {
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(userId);
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -145,20 +195,20 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static BigDecimal getSumOfUserIncomeForPeriod(User user, Date from, Date to) {
-        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(user.getId());
+    public BigDecimal getSumOfUserIncomeForPeriod(Long userId, Date from, Date to) {
+        Optional<List<Transaction>> transactions = transactionRepository.findByUserId(userId);
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }
         return transactions.get().stream()
                 .filter(t -> t.getDate().after(from) || t.getDate().equals(from))
                 .filter(t -> t.getDate().before(to) || t.getDate().equals(to))
-                .filter(t -> t.isIncome())
+                .filter(Transaction::isIncome)
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static Transaction updateTransaction(Transaction transaction) {
+    public Transaction updateTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
 }

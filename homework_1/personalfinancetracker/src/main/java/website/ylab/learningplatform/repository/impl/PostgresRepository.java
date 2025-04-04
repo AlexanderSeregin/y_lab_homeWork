@@ -1,5 +1,6 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import website.ylab.learningplatform.config.DatabaseConfig;
 import website.ylab.learningplatform.repository.Repository;
 
@@ -18,10 +19,14 @@ import java.util.Optional;
  * @param <ID> entity ID type
  */
 public abstract class PostgresRepository<T, ID> implements Repository<T, ID> {
-    protected final DatabaseConfig dbConfig;
+    private DatabaseConfig dbConfig;
+
+    @Autowired
+    protected PostgresRepository(DatabaseConfig dbConfig) {
+        this.dbConfig = dbConfig;
+    }
 
     protected PostgresRepository() {
-        this.dbConfig = DatabaseConfig.getInstance();
     }
 
     /**

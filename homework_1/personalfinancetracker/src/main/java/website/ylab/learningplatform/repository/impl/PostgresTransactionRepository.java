@@ -1,5 +1,6 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.stereotype.Repository;
 import website.ylab.learningplatform.model.Category;
 import website.ylab.learningplatform.model.Transaction;
 import website.ylab.learningplatform.repository.TransactionRepository;
@@ -13,8 +14,8 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of TransactionRepository
  */
+@Repository
 public class PostgresTransactionRepository extends PostgresRepository<Transaction, Long> implements TransactionRepository {
-    private static final PostgresTransactionRepository INSTANCE = new PostgresTransactionRepository();
 
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.transactions WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.transactions";
@@ -31,9 +32,6 @@ public class PostgresTransactionRepository extends PostgresRepository<Transactio
      *
      * @return repository instance
      */
-    public static PostgresTransactionRepository getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public Optional<Transaction> findById(Long id) {

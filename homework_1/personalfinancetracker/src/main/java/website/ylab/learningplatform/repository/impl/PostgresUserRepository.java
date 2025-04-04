@@ -1,5 +1,8 @@
 package website.ylab.learningplatform.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import website.ylab.learningplatform.config.DatabaseConfig;
 import website.ylab.learningplatform.model.User;
 import website.ylab.learningplatform.repository.UserRepository;
 
@@ -11,9 +14,8 @@ import java.util.Optional;
 /**
  * PostgreSQL implementation of UserRepository
  */
+@Repository
 public class PostgresUserRepository extends PostgresRepository<User, Long> implements UserRepository {
-    private static final PostgresUserRepository INSTANCE = new PostgresUserRepository();
-
     private static final String SELECT_BY_ID = "SELECT * FROM finance_schema.users WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM finance_schema.users";
     private static final String SELECT_BY_USERNAME = "SELECT * FROM finance_schema.users WHERE username = ?";
@@ -22,17 +24,17 @@ public class PostgresUserRepository extends PostgresRepository<User, Long> imple
     private static final String UPDATE = "UPDATE finance_schema.users SET username = ?, email = ?, password_hash = ?, is_admin = ?, is_blocked = ?, balance = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM finance_schema.users WHERE id = ?";
 
-    private PostgresUserRepository() {
+    @Autowired
+    public PostgresUserRepository(DatabaseConfig dbConfig) {
+        super(dbConfig);
     }
+
 
     /**
      * Get singleton instance
      *
      * @return repository instance
      */
-    public static PostgresUserRepository getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public Optional<User> findById(Long id) {

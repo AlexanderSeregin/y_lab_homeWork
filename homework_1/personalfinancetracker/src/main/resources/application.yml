@@ -1,0 +1,39 @@
+# Server Configuration
+server:
+  port: 8080
+
+# Spring Configuration
+spring:
+  application:
+    name: personal-finance-tracker
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://postgres:5432/finance_tracker
+    username: finance_user
+    password: finance_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      auto-commit: true
+      connection-timeout: 30000
+
+  # Liquibase Configuration
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    contexts: development
+
+# Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    website.ylab.learningplatform: INFO

@@ -1,68 +1,48 @@
 package website.ylab.learningplatform.config;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
  * Database configuration class that manages the connection pool using HikariCP
  */
+@Repository
+@Configuration
 public class DatabaseConfig {
-    private static DatabaseConfig INSTANCE = new DatabaseConfig();
-    private HikariDataSource dataSource;
-    private Config config;
+    private final HikariDataSource dataSource;
 
-    private DatabaseConfig() {
+    public DatabaseConfig(
+            @Value("${spring.datasource.url}") String jdbcUrl,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password,
+            @Value("${spring.datasource.driver-class-name}") String driverClassName,
+            @Value("${spring.datasource.hikari.maximum-pool-size}") int maximumPoolSize,
+            @Value("${spring.datasource.hikari.auto-commit}") boolean autoCommit,
+            @Value("${spring.datasource.hikari.connection-timeout}") long connectionTimeout
+    ) {
         try {
-            this.config = ConfigFactory.parseFile(new File("src/main/resources/application.conf"))
-                    .withFallback(ConfigFactory.load());
             HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(config.getString("database.url"));
-            hikariConfig.setUsername(config.getString("database.username"));
-            hikariConfig.setPassword(config.getString("database.password"));
-            hikariConfig.setDriverClassName(config.getString("database.driver"));
-            hikariConfig.setMaximumPoolSize(config.getInt("database.maximumPoolSize"));
-            hikariConfig.setAutoCommit(config.getBoolean("database.autoCommit"));
-            hikariConfig.setConnectionTimeout(config.getLong("database.connectionTimeout"));
+            hikariConfig.setJdbcUrl(jdbcUrl);
+            hikariConfig.setUsername(username);
+            hikariConfig.setPassword(password);
+            hikariConfig.setDriverClassName(driverClassName);
+            hikariConfig.setMaximumPoolSize(maximumPoolSize);
+            hikariConfig.setAutoCommit(autoCommit);
+            hikariConfig.setConnectionTimeout(connectionTimeout);
             hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
             hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
             hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
             this.dataSource = new HikariDataSource(hikariConfig);
         } catch (Exception e) {
-            try {
-                this.config = ConfigFactory.parseFile(new File("src/main/resources/applicationTest.conf"))
-                        .withFallback(ConfigFactory.load());
-                HikariConfig hikariConfig = new HikariConfig();
-                hikariConfig.setJdbcUrl(config.getString("database.url"));
-                hikariConfig.setUsername(config.getString("database.username"));
-                hikariConfig.setPassword(config.getString("database.password"));
-                hikariConfig.setDriverClassName(config.getString("database.driver"));
-                hikariConfig.setMaximumPoolSize(config.getInt("database.maximumPoolSize"));
-                hikariConfig.setAutoCommit(config.getBoolean("database.autoCommit"));
-                hikariConfig.setConnectionTimeout(config.getLong("database.connectionTimeout"));
-                hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-                hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-                hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-                this.dataSource = new HikariDataSource(hikariConfig);
-            } catch (Exception e2) {
-                throw new RuntimeException("Failed to initialize database config", e2);
-            }
+            throw new RuntimeException("Failed to initialize database config", e);
         }
-    }
-
-    /**
-     * Get the singleton instance of DatabaseConfig
-     *
-     * @return database config instance
-     */
-    public static DatabaseConfig getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -82,15 +62,6 @@ public class DatabaseConfig {
      */
     public DataSource getDataSource() {
         return dataSource;
-    }
-
-    /**
-     * Get the application configuration
-     *
-     * @return application config
-     */
-    public Config getConfig() {
-        return config;
     }
 
     /**
