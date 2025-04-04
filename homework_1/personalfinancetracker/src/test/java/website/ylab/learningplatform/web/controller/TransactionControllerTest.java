@@ -67,7 +67,7 @@ public class TransactionControllerTest {
         testTransaction = new Transaction();
         testTransaction.setId(1L);
         testTransaction.setUserId(1L);
-        testTransaction.setIncome(true);
+        testTransaction.setIsIncome(true);
         testTransaction.setDescription("Test Transaction");
         testTransaction.setAmount(new BigDecimal("100.00"));
         testTransaction.setCategory(Category.INCOME);

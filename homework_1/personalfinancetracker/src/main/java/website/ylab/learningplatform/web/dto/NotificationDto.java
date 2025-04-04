@@ -9,10 +9,6 @@ public class NotificationDto {
 
     private String message;
 
-    private Date createdAt;
-
-    private boolean isRead;
-
     public NotificationDto() {
     }
 
@@ -20,8 +16,6 @@ public class NotificationDto {
         this.id = id;
         this.userId = userId;
         this.message = message;
-        this.createdAt = createdAt;
-        this.isRead = isRead;
     }
 
     public Long getId() {
@@ -48,19 +42,4 @@ public class NotificationDto {
         this.message = message;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
-    }
 }

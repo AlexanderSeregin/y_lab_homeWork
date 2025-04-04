@@ -65,8 +65,6 @@ public class NotificationControllerTest {
         testNotification.setId(1L);
         testNotification.setUserId(1L);
         testNotification.setMessage("Test notification message");
-        testNotification.setCreatedAt(new Date());
-        testNotification.setRead(false);
     }
 
     @Test

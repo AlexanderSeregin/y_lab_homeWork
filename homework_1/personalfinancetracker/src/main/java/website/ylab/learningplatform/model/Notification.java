@@ -38,4 +38,16 @@ public class Notification {
     public long getUserId() {
         return userId;
     }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

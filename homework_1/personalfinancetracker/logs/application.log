@@ -1,0 +1,26 @@
+2025-04-04 13:18:51.312 [main] INFO  w.y.l.Main - Starting Main using Java 17.0.14 with PID 40829 (/Users/a1/TMP/ylab/y_lab_homeWork/homework_1/personalfinancetracker/build/classes/java/main started by a1 in /Users/a1/TMP/ylab/y_lab_homeWork/homework_1/personalfinancetracker)
+2025-04-04 13:18:51.313 [main] INFO  w.y.l.Main - No active profile set, falling back to 1 default profile: "default"
+2025-04-04 13:18:51.887 [main] INFO  o.s.b.w.e.t.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-04-04 13:18:51.890 [main] INFO  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-04-04 13:18:51.891 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-04-04 13:18:51.891 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-04-04 13:18:51.911 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-04-04 13:18:51.911 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 582 ms
+2025-04-04 13:18:51.938 [main] INFO  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2025-04-04 13:18:51.987 [main] INFO  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@325162e9
+2025-04-04 13:18:51.987 [main] INFO  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-04 13:18:52.183 [main] INFO  l.database - Set default schema name to public
+2025-04-04 13:18:52.449 [main] INFO  l.changelog - Reading from public.databasechangelog
+2025-04-04 13:18:52.482 [main] INFO  l.changelog - Reading from public.databasechangelog
+2025-04-04 13:18:52.485 [main] INFO  l.util - UPDATE SUMMARY
+2025-04-04 13:18:52.486 [main] INFO  l.util - Run:                          0
+2025-04-04 13:18:52.486 [main] INFO  l.util - Previously run:              12
+2025-04-04 13:18:52.486 [main] INFO  l.util - Filtered out:                 0
+2025-04-04 13:18:52.486 [main] INFO  l.util - -------------------------------
+2025-04-04 13:18:52.486 [main] INFO  l.util - Total change sets:           12
+2025-04-04 13:18:52.486 [main] INFO  l.util - Update summary generated
+2025-04-04 13:18:52.495 [main] INFO  l.lockservice - Successfully released change log lock
+2025-04-04 13:18:52.495 [main] INFO  l.command - Command execution complete
+2025-04-04 13:18:52.775 [main] INFO  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-04-04 13:18:52.784 [main] INFO  o.s.b.w.e.t.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2025-04-04 13:18:52.789 [main] INFO  w.y.l.Main - Started Main in 2.051 seconds (process running for 2.447)
