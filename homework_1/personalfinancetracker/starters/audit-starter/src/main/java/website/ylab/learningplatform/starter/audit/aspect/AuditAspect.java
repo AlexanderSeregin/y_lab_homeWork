@@ -7,7 +7,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.Arrays;
 
 /**
@@ -16,11 +15,15 @@ import java.util.Arrays;
 @Aspect
 public class AuditAspect {
     private static final Logger logger = LoggerFactory.getLogger(AuditAspect.class);
-    
+
     private String basePackage;
-    
+
     public AuditAspect(String basePackage) {
         this.basePackage = basePackage;
+    }
+
+    public static String getBasePackagePattern() {
+        return "website.ylab.learningplatform";
     }
 
     /**
@@ -31,7 +34,7 @@ public class AuditAspect {
      * @throws Throwable if an error occurs during method execution
      */
     @Around("execution(* website.ylab.learningplatform..service.TransactionService.*(..)) || " +
-           "execution(* website.ylab.learningplatform..web.controller.TransactionController.*(..))")
+            "execution(* website.ylab.learningplatform..web.controller.TransactionController.*(..))")
     public Object logMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String className = signature.getDeclaringType().getSimpleName();
@@ -51,12 +54,8 @@ public class AuditAspect {
             throw e;
         }
     }
-    
+
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
-    }
-    
-    public static String getBasePackagePattern() {
-        return "website.ylab.learningplatform";
     }
 }

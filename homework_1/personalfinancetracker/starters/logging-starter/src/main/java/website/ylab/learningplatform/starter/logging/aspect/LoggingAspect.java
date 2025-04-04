@@ -15,11 +15,15 @@ import java.util.Arrays;
 @Aspect
 public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
-    
+
     private String basePackage;
-    
+
     public LoggingAspect(String basePackage) {
         this.basePackage = basePackage;
+    }
+
+    public static String getBasePackagePattern() {
+        return "website.ylab.learningplatform";
     }
 
     /**
@@ -49,12 +53,8 @@ public class LoggingAspect {
             throw e;
         }
     }
-    
+
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
-    }
-    
-    public static String getBasePackagePattern() {
-        return "website.ylab.learningplatform";
     }
 }

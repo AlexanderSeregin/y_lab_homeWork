@@ -27,6 +27,10 @@ public class Notification {
         return message;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public Long getId() {
         return userId;
     }
@@ -35,19 +39,15 @@ public class Notification {
         this.id = notificationId;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getUserId() {
         return userId;
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 }

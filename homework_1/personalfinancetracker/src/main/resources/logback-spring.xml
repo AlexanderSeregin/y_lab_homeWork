@@ -27,21 +27,21 @@
 
     <!-- Application specific loggers -->
     <logger name="website.ylab.learningplatform" level="debug" additivity="false">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="LOGSTASH" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
     <!-- AspectJ specific logger -->
     <logger name="website.ylab.learningplatform.aspect" level="debug" additivity="false">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="LOGSTASH" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="LOGSTASH"/>
     </logger>
 
     <root level="info">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="LOGSTASH" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="LOGSTASH"/>
     </root>
 </configuration>

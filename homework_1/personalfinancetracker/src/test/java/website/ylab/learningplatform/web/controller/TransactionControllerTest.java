@@ -17,7 +17,10 @@ import website.ylab.learningplatform.web.dto.TransactionDto;
 import website.ylab.learningplatform.web.mapper.TransactionMapper;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

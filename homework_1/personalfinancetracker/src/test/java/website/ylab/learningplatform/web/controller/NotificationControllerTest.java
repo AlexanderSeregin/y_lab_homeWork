@@ -14,7 +14,6 @@ import website.ylab.learningplatform.service.NotificationService;
 import website.ylab.learningplatform.service.UserService;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

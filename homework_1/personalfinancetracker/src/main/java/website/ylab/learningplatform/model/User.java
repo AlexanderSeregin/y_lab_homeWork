@@ -144,6 +144,10 @@ public class User {
         return isAdmin;
     }
 
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
     public String getName() {
         return username;
     }
@@ -170,10 +174,5 @@ public class User {
 
     public boolean getIsAdmin() {
         return isAdmin;
-    }
-
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
     }
 }

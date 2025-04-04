@@ -27,7 +27,7 @@ tasks.jar {
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    
+
     // Explicitly declare dependencies on the starter modules
     dependsOn(":starters:logging-starter:jar", ":starters:audit-starter:jar")
 }
@@ -42,14 +42,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    
+
     // Custom starters
     implementation(project(":starters:logging-starter"))
     implementation(project(":starters:audit-starter"))
-    
+
     // Swagger dependencies
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    
+
     // DB dependencies
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("com.zaxxer:HikariCP:5.1.0")
