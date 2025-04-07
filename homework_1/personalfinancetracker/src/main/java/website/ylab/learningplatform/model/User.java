@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class User {
     private static long counter = 0;
-    private final boolean isAdmin;
+    private boolean isAdmin;
     private Long id;
     private String username;
     private String email;
@@ -142,6 +142,10 @@ public class User {
      */
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
     public String getName() {

@@ -17,7 +17,10 @@ import website.ylab.learningplatform.web.dto.TransactionDto;
 import website.ylab.learningplatform.web.mapper.TransactionMapper;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +70,7 @@ public class TransactionControllerTest {
         testTransaction = new Transaction();
         testTransaction.setId(1L);
         testTransaction.setUserId(1L);
-        testTransaction.setIncome(true);
+        testTransaction.setIsIncome(true);
         testTransaction.setDescription("Test Transaction");
         testTransaction.setAmount(new BigDecimal("100.00"));
         testTransaction.setCategory(Category.INCOME);

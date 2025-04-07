@@ -45,10 +45,7 @@ public class BudgetControllerTest {
         testUser.setAdmin(false);
 
         // Setup test budget
-        testBudget = new Budget();
-        testBudget.setId(1L);
-        testBudget.setUserId(1L);
-        testBudget.setAmount(new BigDecimal("500.00"));
+        testBudget = new Budget(1L, new BigDecimal("500.00"));
     }
 
     @Test
@@ -65,7 +62,7 @@ public class BudgetControllerTest {
         assertNotNull(response.getBody());
         assertInstanceOf(Budget.class, response.getBody());
         Budget returnedBudget = (Budget) response.getBody();
-        assertEquals(testBudget.getId(), returnedBudget.getId());
+        assertEquals(testBudget.getUserId(), returnedBudget.getUserId());
         assertEquals(testBudget.getAmount(), returnedBudget.getAmount());
     }
 
@@ -154,10 +151,7 @@ public class BudgetControllerTest {
         when(userService.getUserById(1L)).thenReturn(testUser);
         when(budgetService.getUserBudget(1L)).thenReturn(testBudget);
 
-        Budget updatedBudget = new Budget();
-        updatedBudget.setId(1L);
-        updatedBudget.setUserId(1L);
-        updatedBudget.setAmount(newAmount);
+        Budget updatedBudget = new Budget(1L, newAmount);
         when(budgetService.updateBudget(any(Budget.class))).thenReturn(updatedBudget);
 
         // Act

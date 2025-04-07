@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=website.ylab.learningplatform.starter.logging.config.LoggingAutoConfiguration
+org.springframework.context.ApplicationContextInitializer=website.ylab.learningplatform.starter.logging.config.LoggingContextInitializer
